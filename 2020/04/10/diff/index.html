@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="javascript,react," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="&amp;emsp;&amp;emsp;emm会用react，咱都知道react用virtual dom的形式解耦了视图层级和代码的交互操作。&amp;emsp;&amp;emsp;既然托管了view层次的生成，react必然得提供高效的视图生成，不然如果组件之间的转换卡顿严重一定是所有人都受不了的。所以呢，在渲染html方面，react整了个diff算法，提升了html重新渲染的速度。&amp;emsp;&amp;emsp;废话不多说这里先推">
+<meta property="og:type" content="article">
+<meta property="og:title" content="React Diff">
+<meta property="og:url" content="http://tommy0121.github.io/2020/04/10/diff/index.html">
+<meta property="og:site_name" content="tommy的blog">
+<meta property="og:description" content="&amp;emsp;&amp;emsp;emm会用react，咱都知道react用virtual dom的形式解耦了视图层级和代码的交互操作。&amp;emsp;&amp;emsp;既然托管了view层次的生成，react必然得提供高效的视图生成，不然如果组件之间的转换卡顿严重一定是所有人都受不了的。所以呢，在渲染html方面，react整了个diff算法，提升了html重新渲染的速度。&amp;emsp;&amp;emsp;废话不多说这里先推">
+<meta property="og:image" content="http://123.207.87.254:3999/uploads/2020-07-30/3fb0f20d.jpg">
+<meta property="og:image" content="http://123.207.87.254:3999/uploads/2020-07-30/b3a136e2.png">
+<meta property="og:image" content="http://123.207.87.254:3999/uploads/2020-07-30/8b43d475.png">
+<meta property="article:published_time" content="2020-04-09T21:27:00.000Z">
+<meta property="article:modified_time" content="2020-09-23T01:15:22.735Z">
+<meta property="article:author" content="Tommy xia">
+<meta property="article:tag" content="javascript">
+<meta property="article:tag" content="react">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://123.207.87.254:3999/uploads/2020-07-30/3fb0f20d.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://tommy0121.github.io/2020/04/10/diff/"/>
+
+
+
+
+
+  <title>React Diff | tommy的blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">tommy的blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description"></h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-主页">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            主页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-标签">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-分类">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-归档">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://tommy0121.github.io/2020/04/10/diff/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tommy xia">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="tommy的blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">React Diff</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-04-10T05:27:00+08:00">
+                2020-04-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/theory/" itemprop="url" rel="index">
+                    <span itemprop="name">theory</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>&emsp;&emsp;emm会用react，咱都知道react用virtual dom的形式解耦了视图层级和代码的交互操作。<br>&emsp;&emsp;既然托管了view层次的生成，react必然得提供高效的视图生成，不然如果组件之间的转换卡顿严重一定是所有人都受不了的。所以呢，在渲染html方面，react整了个diff算法，提升了html重新渲染的速度。<br>&emsp;&emsp;废话不多说这里先推荐两篇文章，后面写的东西基本都是对于这两篇文章的思路(图片资源也是这里扒下来的= =)。<br>&emsp;&emsp;1：<a href="https://github.com/hujiulong/blog/issues/6#" target="_blank" rel="noopener">从零开始实现一个React（三）：diff算法</a><br>&emsp;&emsp;2：<a href="https://zhuanlan.zhihu.com/p/20346379" target="_blank" rel="noopener">React 源码剖析系列 － 不可思议的 react diff</a><br>&emsp;&emsp;首先咱声明以及明确以下几点。<br>&emsp;&emsp;1：react的diff算法对于新旧两颗dom树只会对<strong>同一层级的节点进行比较，如果类型不同，旧的节点将会直接删除重建</strong>即使是有跨层级移动的节点(节点内容相同，但是新的节点深度和旧节点深度不同)，也是直接删了重建，而不会进行节点移动。<br>&emsp;&emsp;2：新旧两颗树在进行比较之后并不会直接去更新旧树，而是生成一个个patch，然后执行方法根据patch去更新旧树。(在推荐的第一篇文章中由于并没有两颗virtual dom树，用的virtual dom直接和html节点比较，所以它是是直接更新了旧树)。<br>&emsp;&emsp;3：由于react的virtual dom有多种形式，原生的html element标签，自定义的component，字符串，实际上的dom比较还是比较繁琐的，为了简化代码理解，所以这里在后面的代码中默认都是同类型的标签数组。  </p>
+<p>这里定义简单一个TreeNode</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">type</span> ReactNode = &#123;</span><br><span class="line">  tag: <span class="built_in">string</span>;</span><br><span class="line">  attrs: <span class="literal">null</span> | <span class="built_in">object</span>;</span><br><span class="line">  children: ReactNode[] | <span class="built_in">string</span>[];</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>然后写diff方法，这里由于咱默认没有string类型以及component类型的节点，所以我们只需要比较当新节点的tag类型和旧节点的tag类型是否一致。不一样的就删了重新建立。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> diffNode = <span class="function">(<span class="params">preNode: ReactNode, currentNode: ReactNode</span>) =&gt;</span> &#123;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">const</span> preNodeT = preNode <span class="keyword">as</span> ReactNode;</span><br><span class="line">  <span class="keyword">const</span> curNode = currentNode <span class="keyword">as</span> ReactNode;</span><br><span class="line">  <span class="comment">// tag类型不同时直接销毁原node，创建新node。</span></span><br><span class="line">  <span class="keyword">if</span> (!preNode || preNodeT.tag.toLowerCase() !== curNode.tag.toLowerCase()) &#123;</span><br><span class="line">    <span class="keyword">if</span> (preNodeT) &#123;</span><br><span class="line">      preNode = &#123;</span><br><span class="line">        tag: curNode.tag,</span><br><span class="line">        attrs: curNode.attrs,</span><br><span class="line">        children: curNode.children</span><br><span class="line">      &#125;;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (</span><br><span class="line">    (preNodeT.children &amp;&amp; preNodeT.children.length &gt; <span class="number">0</span>) ||</span><br><span class="line">    (curNode.children &amp;&amp; curNode.children.length &gt; <span class="number">0</span>)</span><br><span class="line">  ) &#123;</span><br><span class="line"><span class="comment">//关键方法是这个。</span></span><br><span class="line">    diffChildren(preNodeT, curNode.children);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>关键的在同级比较以及同级节点交换的地方，我相信搜索过diff并且看过一些diff的文章的人都熟悉这么一张同级比较的图。<br><img src="http://123.207.87.254:3999/uploads/2020-07-30/3fb0f20d.jpg" alt="diff"><br>&emsp;&emsp;如果用上述说的不同则删除的说法来处理同级比较的话，react diff算法就没啥好讲了，事实上，在同级计算中用key作为element的唯一标识符，在新旧node的key相同的一些情况下可以直接移动节点而不用删除再创建节点。  </p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> diffChildren =  <span class="function">(<span class="params">preChildren: ReactNode[], currentChildren: ReactNode[]</span>) =&gt;</span> &#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> preKeyArray:<span class="built_in">string</span>[] = preChildren.map(<span class="function"><span class="params">node</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> node.attrs[<span class="string">&#x27;key&#x27;</span>];</span><br><span class="line">  &#125;);</span><br><span class="line">  <span class="keyword">const</span> currentKeyArray:<span class="built_in">string</span>[] = currentChildren.map(<span class="function"><span class="params">node</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> node.attrs[<span class="string">&#x27;key&#x27;</span>];</span><br><span class="line">  &#125;);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (currentChildren &amp;&amp; currentChildren.length &gt; <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="comment">//  lastIndex 作为旧树中已经比较过的节点最右的位置</span></span><br><span class="line">    <span class="keyword">let</span> lastIndex = <span class="number">0</span>;</span><br><span class="line">    <span class="comment">// 遍历新树，preIndex 就是作为旧树的地址下标。</span></span><br><span class="line">    <span class="keyword">let</span> preIndex = <span class="number">0</span>;</span><br><span class="line">    currentChildren.forEach(<span class="function">(<span class="params">currentNode,currentIndex</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">const</span> currentKey = currentNode[<span class="string">&quot;key&quot;</span>];</span><br><span class="line">        <span class="comment">// 新树的key同时存在于旧树</span></span><br><span class="line">        <span class="keyword">if</span> (preKeyArray.includes(currentKey)) &#123;</span><br><span class="line">          <span class="keyword">const</span> preIndex = preKeyArray.indexOf(currentKey)</span><br><span class="line">          <span class="comment">// 仅当当前旧树中的节点位置比lastIndex小的时候需要移动节点</span></span><br><span class="line">          <span class="comment">// 因为这意味着这个节点的新位置将会破坏旧位置的顺序，所以需要进行移动</span></span><br><span class="line">          <span class="keyword">if</span> (preIndex &lt; lastIndex) &#123;</span><br><span class="line">            <span class="comment">// moveChild(preIndex,currentIndex)</span></span><br><span class="line">            preChildren[currentIndex] = preChildren[preIndex];</span><br><span class="line">          &#125;</span><br><span class="line">          lastIndex = <span class="built_in">Math</span>.max(preIndex, lastIndex);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 新树的key不存在旧树的时候</span></span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">          <span class="comment">// 旧树同位置节点存在则删除旧节点并且创建节点</span></span><br><span class="line">          <span class="comment">// 否则直接创建节点</span></span><br><span class="line">          <span class="keyword">if</span> (preChildren[currentIndex]) &#123;</span><br><span class="line">            lastIndex = <span class="built_in">Math</span>.max(currentIndex, lastIndex);</span><br><span class="line">            <span class="comment">// removeChild(preChildren[currentIndex])</span></span><br><span class="line">            preChildren[currentIndex] = <span class="literal">undefined</span>;</span><br><span class="line">          &#125;</span><br><span class="line">          <span class="comment">// createChild(currentNode,preIndex);</span></span><br><span class="line">          preChildren[currentIndex] = currentNode;</span><br><span class="line">        &#125;</span><br><span class="line">        diffNode(preChildren[preIndex],currentChildren[currentIndex])</span><br><span class="line">        preIndex++;</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    preChildren.forEach(<span class="function">(<span class="params">item,index</span>)=&gt;</span>&#123;</span><br><span class="line">      <span class="keyword">if</span> (!currentKeyArray.includes(item.attrs[<span class="string">&#x27;key&#x27;</span>])) &#123;</span><br><span class="line">        preChildren[index]=<span class="literal">undefined</span>;</span><br><span class="line">        <span class="comment">// removeChild(item)</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;基本的diff大概就是这样了，这里用了两个测试用例。分别是：旧树key为1234，新树key为2143，以及旧树key为1234，新树key为214，结果如下所示<br><img src="http://123.207.87.254:3999/uploads/2020-07-30/b3a136e2.png" alt="test case1"><br><img src="http://123.207.87.254:3999/uploads/2020-07-30/8b43d475.png" alt="test case2"><br>&emsp;&emsp;但说实话要完全实现的话还是比较复杂的，要比对是否为react element还是component，要对attribute就行比较，节点删除又专门的unMount方法，但是咱也不可能真就复制一份react代码呗。而且现在react开始使用fiber结构(就是说这个方法过时了= =)，上面文章2的代码都得去react之前的release去找了…<br>&emsp;&emsp;但是(震声)！咱也不是白看的diff啊，咱至少知道了key有啥用不是。<br>&emsp;&emsp;写代码要是细一点，就该把所有的位置有可能变化的列表数据都给他添上唯一性ID，即使后台给的数据，我们也可以在获得数据的同时自己给他加一个不变的唯一性id，不加的话，这可都是新建以及销毁的开销是吧。  </p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/javascript/" rel="tag"># javascript</a>
+          
+            <a href="/tags/react/" rel="tag"># react</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/08/15/%E7%AE%80%E5%8D%95%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AAreact%E7%8E%AF%E5%A2%83%E5%B7%A5%E7%A8%8B%E5%8C%96%E7%8E%AF%E5%A2%83%E4%BA%8C/" rel="next" title="前端本地依赖">
+                <i class="fa fa-chevron-left"></i> 前端本地依赖
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/04/29/Java-avoid-not-equal-null/" rel="prev" title="Java Avoid Not Equal Null">
+                Java Avoid Not Equal Null <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Tommy xia</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/Tommy0121" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tommy xia</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

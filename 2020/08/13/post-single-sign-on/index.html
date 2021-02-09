@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="项目相关," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="&amp;emsp;&amp;emsp;是这样的，之前有说过，项目的新模块都是用单页面应用来弄的，一个flow，或者说一个模块就是一个单页面应用。&amp;emsp;&amp;emsp;这里就有一个问题，就是多个应用之间我如何共享session，我总不能退出来后重新登录吧，这里就来了解下，单页面应用之间是如何共享session的。好吧，标题也写了，就是SSO（单点登录）。具体项目上长啥样，这里记录一下- -，顺便写点之前的疑惑和">
+<meta property="og:type" content="article">
+<meta property="og:title" content="single-sign-on">
+<meta property="og:url" content="http://tommy0121.github.io/2020/08/13/post-single-sign-on/index.html">
+<meta property="og:site_name" content="tommy的blog">
+<meta property="og:description" content="&amp;emsp;&amp;emsp;是这样的，之前有说过，项目的新模块都是用单页面应用来弄的，一个flow，或者说一个模块就是一个单页面应用。&amp;emsp;&amp;emsp;这里就有一个问题，就是多个应用之间我如何共享session，我总不能退出来后重新登录吧，这里就来了解下，单页面应用之间是如何共享session的。好吧，标题也写了，就是SSO（单点登录）。具体项目上长啥样，这里记录一下- -，顺便写点之前的疑惑和">
+<meta property="article:published_time" content="2020-08-13T06:14:55.000Z">
+<meta property="article:modified_time" content="2020-09-23T01:15:22.738Z">
+<meta property="article:author" content="Tommy xia">
+<meta property="article:tag" content="项目相关">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://tommy0121.github.io/2020/08/13/post-single-sign-on/"/>
+
+
+
+
+
+  <title>single-sign-on | tommy的blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">tommy的blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description"></h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-主页">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            主页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-标签">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-分类">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-归档">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://tommy0121.github.io/2020/08/13/post-single-sign-on/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tommy xia">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="tommy的blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">single-sign-on</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-08-13T14:14:55+08:00">
+                2020-08-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/theory/" itemprop="url" rel="index">
+                    <span itemprop="name">theory</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>&emsp;&emsp;是这样的，之前有说过，项目的新模块都是用单页面应用来弄的，一个flow，或者说一个模块就是一个单页面应用。<br>&emsp;&emsp;这里就有一个问题，就是<strong>多个应用之间我如何共享session</strong>，我总不能退出来后重新登录吧，这里就来了解下，单页面应用之间是如何共享session的。好吧，标题也写了，就是SSO（单点登录）。具体项目上长啥样，这里记录一下- -，顺便写点之前的疑惑和其解答。只想看单点登录的解决方案，可以直接看这个篇文章<a href="https://www.cnblogs.com/bingyimeiling/p/11698468.html" target="_blank" rel="noopener">单点登录（SSO）解决方案介绍</a></p>
+<h1 id="前后端如何保存session"><a href="#前后端如何保存session" class="headerlink" title="前后端如何保存session"></a>前后端如何保存session</h1><p>&emsp;&emsp;在了解SSO之前，先了解session的本质是什么。说实话，在最开始学习web的时候有过这样的疑问，http明明是无状态的，请求结束后就断开连接了，为啥还能有session的存在啊。<br>&emsp;&emsp;其实session原理是这样的，在浏览器请求的时候浏览器会附带有cookie，而服务器中会判断cookie是否有特定的token，如果不存在，则此次请求是一个新的会话，如果存在，判断其token是否存在记录，不存在或者记录此token已经过期，则也是一个新的session。<br>&emsp;&emsp;如果是一个新的session，生成token，放入response的cookie中，前端会保存cookie。而cookie的生命是可设置的，如果不设置的话默认为浏览器关闭后清除cookie。<del>所以最开始学习java web的时候书上或者视频里说一个session就是打开网站到关闭网站的那些，都是傻逼，吊玩意儿不懂</del>。<br>&emsp;&emsp;了解session的原理后，我们就知道了，前端是使用cookie保存session标识位，后端的话，可以自建容器或者使用redis之类的保存cookie。</p>
+<h1 id="SSO具体实现"><a href="#SSO具体实现" class="headerlink" title="SSO具体实现"></a>SSO具体实现</h1><p>&emsp;&emsp;在之前的项目中新模块使用spa开发，即进入新模块就是跳转到一个不同页面。这个时候项目中的express写的node层面的代码获得request附带的cookie，去请求登录系统的接口，判断此token，返回对应状态码，让前端判断。做一些类似过期回到登录页面的操作。<br>&emsp;&emsp;但是这里有个问题，就是跨域的时候cookie不共享，要怎么设置cookie，这里有两个方案</p>
+<ul>
+<li><p>网页同属一个二级域<br>&emsp;&emsp;cookie可以设置在自己的域和顶域，比如a.app.com可以设置app.com的cookie，而b.app.com可以访问app.com的cookie。(但是不能设置为公共域名cookie，比如.com .cn)</p>
+</li>
+<li><p>网页域名完全不同<br>&emsp;&emsp;当网页域名完全不同时，就需要一个单独的登录系统具体行为如下：<br>&emsp;&emsp;当app a需要登录的时候，定向到SSO进行登陆后，定向回到a并附加系统生成token，a使用token访问SSO系统，判断token可用，然后设置a系统域名下token。<br>&emsp;&emsp;当app b需要登陆，但是用户状态已经登录时，b访问SSO，SSO直接重定向回到b并返回token，b去在向SSO验证token后，在b系统cookie中写入token。</p>
+</li>
+</ul>
+<p>&emsp;&emsp;这里注意拿到token之后一定要去校验，防止伪造token。</p>
+<h1 id="cookie相关"><a href="#cookie相关" class="headerlink" title="cookie相关"></a>cookie相关</h1><p>&emsp;&emsp;由于身份认证和cookie关系密切，所以这里主要记录一些cookie相关内容</p>
+<ul>
+<li>常见属性<br>&emsp;&emsp;<strong>maxAge</strong>。用于设置cookie存在时间，单位为秒，为负数的时候就是关闭浏览器后删除，默认-1。用<strong>expires</strong>也可以设置，但是expires属性是http1.0的协议内容，maxAge是http1.1内容，maxAge的优先级高于expires。<br>&emsp;&emsp;<strong>secure</strong>这个属性表示此cookie只在https的请求中附带。<br>&emsp;&emsp;<strong>httpOnly</strong>这个禁止用户在js中操作此cookie，主要是防止xss，即防止插入页面的脚本直接获得cookie中的token然后任意访问服务器。<br>&emsp;&emsp;<strong>domain、path</strong>这两个主要是设置cookie的具体地址，如果这两个值都设置了，那么该cookie只会在该路径被发送到服务端。当然啦，再怎么设置cookie也没法跨域。</li>
+<li>小tips<br>&emsp;&emsp;浏览器的fetch默认不附带cookie，需要自己设置fetch属性credential为true。<br>&emsp;&emsp;跨域请求也是不附带cookie，需要后端设置Access-Control-Allow-Credentials，并且Access-Control-Allow-Origin也必须指定origin，而不能使用*进行通配。</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E9%A1%B9%E7%9B%AE%E7%9B%B8%E5%85%B3/" rel="tag"># 项目相关</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/07/31/javascript-event/" rel="next" title="JavaScript事件">
+                <i class="fa fa-chevron-left"></i> JavaScript事件
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/08/18/%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/" rel="prev" title="发布订阅">
+                发布订阅 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Tommy xia</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/Tommy0121" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前后端如何保存session"><span class="nav-number">1.</span> <span class="nav-text">前后端如何保存session</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SSO具体实现"><span class="nav-number">2.</span> <span class="nav-text">SSO具体实现</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#cookie相关"><span class="nav-number">3.</span> <span class="nav-text">cookie相关</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tommy xia</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

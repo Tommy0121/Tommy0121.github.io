@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="javascript,react,前端工程," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="1一个正常的前端工程化环境&amp;emsp;&amp;emsp;想到react环境的话第一就是create-react-app呗，官方指定脚手架。然而，一个正常的前端开发环境，测试要有吧，生态组件要有吧，CI要有吧，就算不用typescript，起码的ES6要用上吧。仅仅是用上react，只需要在html头引入react库就够了，但是一个能用的前端工程化环境绝对不是一个引入了各种库的html就够了。   &amp;em">
+<meta property="og:type" content="article">
+<meta property="og:title" content="简单搭建一个react开发环境">
+<meta property="og:url" content="http://tommy0121.github.io/2019/08/07/%E7%AE%80%E5%8D%95%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AAreact%E7%8E%AF%E5%A2%83%E5%B7%A5%E7%A8%8B%E5%8C%96%E7%8E%AF%E5%A2%831/index.html">
+<meta property="og:site_name" content="tommy的blog">
+<meta property="og:description" content="1一个正常的前端工程化环境&amp;emsp;&amp;emsp;想到react环境的话第一就是create-react-app呗，官方指定脚手架。然而，一个正常的前端开发环境，测试要有吧，生态组件要有吧，CI要有吧，就算不用typescript，起码的ES6要用上吧。仅仅是用上react，只需要在html头引入react库就够了，但是一个能用的前端工程化环境绝对不是一个引入了各种库的html就够了。   &amp;em">
+<meta property="og:image" content="https://s3.ax1x.com/2021/02/03/yKeTNd.png">
+<meta property="article:published_time" content="2019-08-06T23:03:33.000Z">
+<meta property="article:modified_time" content="2021-02-03T02:01:12.993Z">
+<meta property="article:author" content="Tommy xia">
+<meta property="article:tag" content="javascript">
+<meta property="article:tag" content="react">
+<meta property="article:tag" content="前端工程">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s3.ax1x.com/2021/02/03/yKeTNd.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://tommy0121.github.io/2019/08/07/简单搭建一个react环境工程化环境1/"/>
+
+
+
+
+
+  <title>简单搭建一个react开发环境 | tommy的blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">tommy的blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description"></h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-主页">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            主页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-标签">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-分类">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-归档">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://tommy0121.github.io/2019/08/07/%E7%AE%80%E5%8D%95%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AAreact%E7%8E%AF%E5%A2%83%E5%B7%A5%E7%A8%8B%E5%8C%96%E7%8E%AF%E5%A2%831/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tommy xia">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="tommy的blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">简单搭建一个react开发环境</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-07T07:03:33+08:00">
+                2019-08-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Development/" itemprop="url" rel="index">
+                    <span itemprop="name">Development</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="1一个正常的前端工程化环境"><a href="#1一个正常的前端工程化环境" class="headerlink" title="1一个正常的前端工程化环境"></a>1一个正常的前端工程化环境</h2><p>&emsp;&emsp;想到react环境的话第一就是create-react-app呗，官方指定脚手架。然而，一个正常的前端开发环境，测试要有吧，生态组件要有吧，CI要有吧，就算不用typescript，起码的ES6要用上吧。仅仅是用上react，只需要在html头引入react库就够了，但是一个能用的前端工程化环境绝对不是一个引入了各种库的html就够了。  </p>
+<p>&emsp;&emsp;话是这么说的，但是啥玩意儿都是从简到繁的，所以这里先搭建一个react的基础环境。  </p>
+<h2 id="2-router，network，ui，typescript，sass"><a href="#2-router，network，ui，typescript，sass" class="headerlink" title="2 router，network，ui，typescript，sass"></a>2 router，network，ui，typescript，sass</h2><p>&emsp;&emsp;路由使用connected-react-router，因为react-router-dom路由跳转都是包装好的，需要在方法中执行路由跳转必须使用这个包，具体情况如下见<a href="https://reactrouter.com/web/guides/deep-redux-integration" target="_blank" rel="noopener">Deep Redux Integration</a>。全局状态管理使用redux，（主要是没用过其他的状态管理库）。网络方面由于redux不能处理网络请求，所以使用redux-thunk。具体的请求库使用axios，（其实并没有用到很多axios相关的特性，只用到了一个能cancel network的方法）。UI用antd（项目上都是自己写的组件，但是有一说一人家组件比自己写的好多了）。然后Typescript也是需要的（都0202年了不会还有人不用typescript吧，不会吧不会吧）</p>
+<p>&emsp;&emsp;第一个问题出现了，UI库的css不论是antd还是bootstrap的css文件都是没有css module的，当你在index.tsx文件中import css文件会一次性加载所有css。antd官方文档有提供解决方案，<a href="https://ant.design/docs/react/use-with-create-react-app-cn#%E9%AB%98%E7%BA%A7%E9%85%8D%E7%BD%AE" target="_blank" rel="noopener">antd按需加载</a>。这里的那个react-app-rewired可以在不eject react-script的情况下更改react-script的webpack配置。<br>&emsp;&emsp;然后install typescript，这里有个问题，那就是很多库没有定义过类型信息(比如react)。就需要install @type/react这样的东西，那如果有些东西在npm上面没有类型定义呢，比如我要导入一个svg，本来直接import就好了，但是typescript需要知道svg的类型信息，那就只能自己定义一个svg的类型。<br>&emsp;&emsp;在typescript里面申明类型信息，src里面建立一个index.d.ts如下写就好了  </p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/// &lt;reference types="node" /&gt;</span></span><br><span class="line"><span class="comment">/// &lt;reference types="react" /&gt;</span></span><br><span class="line"><span class="comment">/// &lt;reference types="react-dom" /&gt;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">declare</span> <span class="keyword">module</span> '*.svg' &#123;</span><br><span class="line">  <span class="keyword">import</span> * <span class="keyword">as</span> React <span class="keyword">from</span> <span class="string">'react'</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">export</span> <span class="keyword">const</span> ReactComponent: React.FunctionComponent&lt;React.SVGProps&lt;SVGSVGElement&gt;&gt;;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> src: <span class="built_in">string</span>;</span><br><span class="line">  <span class="keyword">export</span> <span class="keyword">default</span> src;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;上面那个三斜杠表示引用项，下面的declare表示定义模块类型信息。这里有点被坑惨了….之前eject react-script之后直接run start是会直接can not find module svg，事实上不eject直接run react-script会在react-script里面自动生成一个react-app.d.ts用于定义一些resource的类型，emmm就当学习了…….<br>&emsp;&emsp;最后是sass，这个简单，脚手架已经配置好了loader，只需要install sass-node就好了，这里sass的npm下载可能很慢，建议cnpm。如果之前的antd有配置过按需加载，比较建议的是在项目根目录添加.npmrc或者.yarnrc文件来指定具体的源。</p>
+<h2 id="3-测试"><a href="#3-测试" class="headerlink" title="3 测试"></a>3 测试</h2><p>&emsp;&emsp;一个工程化的项目单元测试一定是要的伐，前端单元测试框架那么多我当然就用现在组里在用的那个jest。在jest之前有用过mocha，但是对于它UI测试很不友好，CRA(create react app简称，我以后都这么叫好了..)自带有jest，那么咱就安装@types/jest，enzyme，jest-enzyme，enzyme-adapter-react-16(这个包按照react版本来)。  enzyme是一个很好用的测试util库，主要用到断言。<br>&emsp;&emsp;一般来说，如果是自己整的jest环境，还需要写几个文件去mock 静态资源文件，比如svg，jpg，css。非常开心CRA都自己写好了mock数据的配置文件。然后是enzyme的问题，enzyme想要测试react的话，按照官方文档，我们需要  </p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; configure &#125; <span class="keyword">from</span> <span class="string">'enzyme'</span>;</span><br><span class="line"><span class="keyword">import</span> Adapter <span class="keyword">from</span> <span class="string">'enzyme-adapter-react-16'</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="string">'jest-enzyme'</span>;</span><br><span class="line"></span><br><span class="line">configure(&#123; <span class="attr">adapter</span>: <span class="keyword">new</span> Adapter() &#125;);</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;这么一个配置项写到指定jest的setupTests文件。然后弄了半天的我发现react-script其实有定义默认的setupTests…..路径为src/setupTests.ts。也就是说我们只需要在src目录下面新建setupTests.ts文件，然后把以上代码复制进去就够了。其实还是比较建议看一看react-script里面具体有哪些文件是默认可配置的…<br><img src="https://s3.ax1x.com/2021/02/03/yKeTNd.png" alt="default configure path">  </p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/javascript/" rel="tag"># javascript</a>
+          
+            <a href="/tags/react/" rel="tag"># react</a>
+          
+            <a href="/tags/%E5%89%8D%E7%AB%AF%E5%B7%A5%E7%A8%8B/" rel="tag"># 前端工程</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/08/07/closure/" rel="next" title="js-closure">
+                <i class="fa fa-chevron-left"></i> js-closure
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/08/15/%E7%AE%80%E5%8D%95%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AAreact%E7%8E%AF%E5%A2%83%E5%B7%A5%E7%A8%8B%E5%8C%96%E7%8E%AF%E5%A2%83%E4%BA%8C/" rel="prev" title="前端本地依赖">
+                前端本地依赖 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Tommy xia</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/Tommy0121" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1一个正常的前端工程化环境"><span class="nav-number">1.</span> <span class="nav-text">1一个正常的前端工程化环境</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-router，network，ui，typescript，sass"><span class="nav-number">2.</span> <span class="nav-text">2 router，network，ui，typescript，sass</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-测试"><span class="nav-number">3.</span> <span class="nav-text">3 测试</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tommy xia</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

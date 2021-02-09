@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="javascript,react," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="1：需求&amp;emsp;&amp;emsp;原需求是要做个聊天框效果，但是聊天框是从下到上的..原本一般的从上到下聊天框就很简单，我只要把动画效果封装到组件里面，然后延迟给数组添加数据就可以了，类似如下这样&amp;emsp;&amp;emsp;但是需求咋可能这么简单呢….我最终需要的效果长这样….不仅如此，这个聊天框组件距离页面的header的margin是固定的，那么聊天框整个组件一开始的初始位置就应该是聊天框组件的高度">
+<meta property="og:type" content="article">
+<meta property="og:title" content="聊天框效果">
+<meta property="og:url" content="http://tommy0121.github.io/2019/05/06/%E8%81%8A%E5%A4%A9%E6%A1%86%E6%95%88%E6%9E%9C/index.html">
+<meta property="og:site_name" content="tommy的blog">
+<meta property="og:description" content="1：需求&amp;emsp;&amp;emsp;原需求是要做个聊天框效果，但是聊天框是从下到上的..原本一般的从上到下聊天框就很简单，我只要把动画效果封装到组件里面，然后延迟给数组添加数据就可以了，类似如下这样&amp;emsp;&amp;emsp;但是需求咋可能这么简单呢….我最终需要的效果长这样….不仅如此，这个聊天框组件距离页面的header的margin是固定的，那么聊天框整个组件一开始的初始位置就应该是聊天框组件的高度">
+<meta property="og:image" content="http://123.207.87.254:3999/uploads/2020-07-30/e7771381.gif">
+<meta property="og:image" content="http://123.207.87.254:3999/uploads/2020-07-30/d40bf0a3.gif">
+<meta property="article:published_time" content="2019-05-05T16:00:00.000Z">
+<meta property="article:modified_time" content="2020-09-23T01:15:22.740Z">
+<meta property="article:author" content="Tommy xia">
+<meta property="article:tag" content="javascript">
+<meta property="article:tag" content="react">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://123.207.87.254:3999/uploads/2020-07-30/e7771381.gif">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://tommy0121.github.io/2019/05/06/聊天框效果/"/>
+
+
+
+
+
+  <title>聊天框效果 | tommy的blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">tommy的blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description"></h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-主页">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            主页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-标签">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-分类">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-归档">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://tommy0121.github.io/2019/05/06/%E8%81%8A%E5%A4%A9%E6%A1%86%E6%95%88%E6%9E%9C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tommy xia">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="tommy的blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">聊天框效果</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-05-06T00:00:00+08:00">
+                2019-05-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Development/" itemprop="url" rel="index">
+                    <span itemprop="name">Development</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="1：需求"><a href="#1：需求" class="headerlink" title="1：需求"></a>1：需求</h2><p>&emsp;&emsp;原需求是要做个聊天框效果，但是聊天框是从下到上的..原本一般的从上到下聊天框就很简单，我只要把动画效果封装到组件里面，然后延迟给数组添加数据就可以了，类似如下这样<br><img src="http://123.207.87.254:3999/uploads/2020-07-30/e7771381.gif" alt="animation.gif"><br>&emsp;&emsp;但是需求咋可能这么简单呢….我最终需要的效果长这样….不仅如此，这个聊天框组件距离页面的header的margin是固定的，那么聊天框整个组件一开始的初始位置就应该是聊天框组件的高度加上某个固定的margin-top。<img src="http://123.207.87.254:3999/uploads/2020-07-30/d40bf0a3.gif" alt="requirement.gif"></p>
+<p>&emsp;&emsp;要做聊天框上移效果，第一次上移的距离是loading动画的距离，第二次上移的距离是下个聊天框高度减去loading高度的距离，loading动画高度固定可写死，但是下个聊天框的高度就免不了需要用api获得高度。<br>&emsp;&emsp;反正就是乱七八糟的一大堆属性需要用js动态的获得。组件的初始位置的margin-top还好，在didMount方法里面直接设置就完事儿了。但是css的动画定义是hard code，所以无法直接动态设置css动画的移动高度。<br>&emsp;&emsp;解决方案：<br>&emsp;&emsp;1、动态添加css。在上移高度计算好之后在document上面动态添加css样式<br>&emsp;&emsp;2、使用原生的js动画，可用的API有requestAnimaionFrame，和setInterval，区别是requestAnimationFrame是固定60帧移动，setInterval是可设置移动帧数。自己写动画太费时间，所以最后是使用了anime.js来做动画效果。  </p>
+<p>&emsp;&emsp;使用的react，根据react生命周期，需要在render之后才能dom的确切高度，使用ref获得节点，在componentDidMount里面获得节点高度进行计算。计算出div的margin-top和以及需要的anime。</p>
+<h2 id="2：问题"><a href="#2：问题" class="headerlink" title="2：问题"></a>2：问题</h2><h3 id="3-1-html高度问题"><a href="#3-1-html高度问题" class="headerlink" title="3.1 html高度问题"></a>3.1 html高度问题</h3><p>&emsp;&emsp;问题来了，在componentDidMount获得的高度是未应用css时，原生html的高度，即无法获得css渲染后的dom高度。<br>&emsp;&emsp;问题所在：这是因为webpack在style-loader, less-loader, css-loader 加入sourceMap打包的时候先运行了生成dom的js，再通过js引入css 。去除即可（其实找了个plugin，mini-css-extract-plugin这个也可以解决先运行js再运行css的问题的）</p>
+<h2 id="3-2：还是html高度问题"><a href="#3-2：还是html高度问题" class="headerlink" title="3.2：还是html高度问题"></a>3.2：还是html高度问题</h2><p>&emsp;&emsp;即使是去除了source-map获得的dom高度依然是有问题的。原因在于，使用的字体是谷歌的第三方字体，而第三方字体渲染的机制如下：  </p>
+<p>&emsp;&emsp; 第三方字体加载未完成之前，所有的字体样式的css并不应用，同时使用浏览器本地字体库代替第三方字体，当第三方字体加载成功后，第三方字体会替代本地字体。  </p>
+<p>&emsp;&emsp; 很不幸，debug发现js执行到获取dom高度的时候第三方字体并没有加载成功，所以获取到dom的高度是本地字体渲染时的高度，与最终呈现的高度有所误差。最终找到一个fontfaceobserver的插件使用，插件会观察制定的字体加载情况，提供了一个加载成功的promise，将所有计算以及获取代码放到这个promise中即可(目前不知道直接下载font是不是有效的解决方案，主要不知道怎么才能把font文件放在服务器上= =)。  </p>
+<h2 id="3-3：组件生命周期"><a href="#3-3：组件生命周期" class="headerlink" title="3.3：组件生命周期"></a>3.3：组件生命周期</h2><p>&emsp;&emsp; 本以为到此为止，运行之后看见控制台有抛出一个警告。大意是，不要在componentDidMount使用延时的setState()。因为可能会出现promise未返回，或者setTimeout时间未到，component就已经Unmount了，这个时候执行setState去设置div的margin显然是不行的。  </p>
+<p>&emsp;&emsp; 解决方案：动态计算出来的margin值不放在state里面，而是存储在redux中，然后作为props传入组件，在promise里面调用某个action，改变margin值这样的话，即使组件已经unmount了，更改redux值也不会有什么问题。  </p>
+<hr/>
+
+<p>&emsp;&emsp; 至此，动画效果问题基本解决。遗留的唯一一个问题是可不可以通过下载font把fontfaceobserver干掉….但是我这里又没办法去弄服务器，就很烦。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/javascript/" rel="tag"># javascript</a>
+          
+            <a href="/tags/react/" rel="tag"># react</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/29/promise-async/" rel="next" title="Promise Async">
+                <i class="fa fa-chevron-left"></i> Promise Async
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/06/10/jest-react-test/" rel="prev" title="Jest React Test">
+                Jest React Test <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Tommy xia</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/Tommy0121" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1：需求"><span class="nav-number">1.</span> <span class="nav-text">1：需求</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2：问题"><span class="nav-number">2.</span> <span class="nav-text">2：问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-html高度问题"><span class="nav-number">2.1.</span> <span class="nav-text">3.1 html高度问题</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2：还是html高度问题"><span class="nav-number">3.</span> <span class="nav-text">3.2：还是html高度问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-3：组件生命周期"><span class="nav-number">4.</span> <span class="nav-text">3.3：组件生命周期</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tommy xia</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

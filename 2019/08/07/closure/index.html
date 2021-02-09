@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="javascript," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="1 使用场景&amp;emsp;&amp;emsp;自己写demo的时候碰到一个问题，我在使用document.addEventListener()的时候，添加的callback必须要传入几个参数。这个问题不大，我可以用闭包的形式这样写 1234567const listener &#x3D; (arg1,arg2) &#x3D;&gt;&amp;#123;  return (e) &#x3D;&gt; &amp;#123;  console.log(e)">
+<meta property="og:type" content="article">
+<meta property="og:title" content="js-closure">
+<meta property="og:url" content="http://tommy0121.github.io/2019/08/07/closure/index.html">
+<meta property="og:site_name" content="tommy的blog">
+<meta property="og:description" content="1 使用场景&amp;emsp;&amp;emsp;自己写demo的时候碰到一个问题，我在使用document.addEventListener()的时候，添加的callback必须要传入几个参数。这个问题不大，我可以用闭包的形式这样写 1234567const listener &#x3D; (arg1,arg2) &#x3D;&gt;&amp;#123;  return (e) &#x3D;&gt; &amp;#123;  console.log(e)">
+<meta property="article:published_time" content="2019-08-06T20:26:18.000Z">
+<meta property="article:modified_time" content="2020-09-23T01:15:22.734Z">
+<meta property="article:author" content="Tommy xia">
+<meta property="article:tag" content="javascript">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://tommy0121.github.io/2019/08/07/closure/"/>
+
+
+
+
+
+  <title>js-closure | tommy的blog</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">tommy的blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description"></h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-主页">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            主页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-标签">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-分类">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-归档">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://tommy0121.github.io/2019/08/07/closure/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tommy xia">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="tommy的blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">js-closure</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-08-07T04:26:18+08:00">
+                2019-08-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/theory/" itemprop="url" rel="index">
+                    <span itemprop="name">theory</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="1-使用场景"><a href="#1-使用场景" class="headerlink" title="1 使用场景"></a>1 使用场景</h2><p>&emsp;&emsp;自己写demo的时候碰到一个问题，我在使用document.addEventListener()的时候，添加的callback必须要传入几个参数。这个问题不大，我可以用闭包的形式这样写</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> listener = <span class="function">(<span class="params">arg1,arg2</span>) =&gt;</span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="function">(<span class="params">e</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(e)</span><br><span class="line">  <span class="built_in">console</span>.log(arg2)</span><br><span class="line">  <span class="built_in">console</span>.log(arg1)  </span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>但是我用的react我需要在componentWillUnMount的时候需要这个eventListener删了，这种返回的function 是个匿名函数是删不掉的。<br>&emsp;&emsp;这个时候就需要bind()方法了，bind()方法创建一个新的函数，新函数的<strong>this</strong>，被方法的第一个参数指定，其余参数则作为新函数的参数提供调用。咱可以这样写</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> listener = <span class="function">(<span class="params">arg1,arg2,e</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(arg1);</span><br><span class="line">  <span class="built_in">console</span>.log(arg2);</span><br><span class="line">  <span class="built_in">console</span>.log(e);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> keyListener = listener.bind(<span class="literal">null</span>,arg1,arg2);</span><br><span class="line"><span class="built_in">document</span>.addListener(<span class="string">&quot;keydown&quot;</span>,keyListener);</span><br><span class="line"><span class="built_in">document</span>.removeEventListener(<span class="string">&#x27;keydown&#x27;</span>, keyListener);</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-引申及思考"><a href="#2-引申及思考" class="headerlink" title="2 引申及思考"></a>2 引申及思考</h2><p>&emsp;&emsp;好了，这里涉及到的代码可以引申出去的知识点有下面这几个：this, bind(), call(), apply(), closure。this，bind()，closure不提，为啥会扯到call() apply()呢，因为mdn翻了一下function类型的prototype方法除了toString()就三个，bind(),call(),apply()，顺便了解下没毛病。</p>
+<h3 id="2-1-闭包"><a href="#2-1-闭包" class="headerlink" title="2.1 闭包"></a>2.1 闭包</h3><p>&emsp;&emsp;咱按照《你不知道的JavaScript》的顺序来讲，先讲讲闭包。闭包的外在表现是在定义时的词法作用域外的地方被调用时可以访问定义时的作用域。比如这里的</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> listener = <span class="function">(<span class="params">arg1,arg2</span>) =&gt;</span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="function">(<span class="params">e</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(e)</span><br><span class="line">  <span class="built_in">console</span>.log(arg2)</span><br><span class="line">  <span class="built_in">console</span>.log(arg1)  </span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">document</span>.addListener(<span class="string">&quot;keydown&quot;</span>,listener());</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;当我们keydown事件触发的时候我具体执行的是这样一个匿名函数</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(e)=&gt;&#123; <span class="built_in">console</span>.log(e);<span class="built_in">console</span>.log(arg2);<span class="built_in">console</span>.log(arg1);  &#125;</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;其中e是事件触发时callback传入的参数，而arg2和arg1的值完全是函数定义的时候的变量….闭包是个啥东西呢，基本可以认为如果将具体执行函数单独挑出来，发现其中调用了定义时的作用域的变量，那么这就是个闭包….所以其实书中认为IIFE并不是个闭包..<br>&emsp;&emsp;关于闭包我再翻个var带来的闭包老黄历，如下所示</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">&lt;body&gt;</span><br><span class="line">  &lt;ul&gt;</span><br><span class="line">    &lt;li&gt;adf&lt;/li&gt;</span><br><span class="line">    &lt;li&gt;d&lt;/li&gt;</span><br><span class="line">    &lt;li&gt;f&lt;/li&gt;</span><br><span class="line">    &lt;li&gt;fff&lt;/li&gt;</span><br><span class="line">    &lt;li&gt;zc&lt;/li&gt;</span><br><span class="line">    &lt;li&gt;ad&lt;/li&gt;</span><br><span class="line">    &lt;li&gt;vv&lt;/li&gt;</span><br><span class="line"></span><br><span class="line">  &lt;/ul&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line">  <span class="keyword">var</span> list = <span class="built_in">document</span>.getElementsByTagName(<span class="string">&quot;li&quot;</span>);</span><br><span class="line">  <span class="built_in">console</span>.log(list);</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; list.length; i++) &#123;</span><br><span class="line">    list[i].addEventListener(<span class="string">&quot;click&quot;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">      <span class="built_in">console</span>.log(i)</span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;这个时候发现无论点的哪个，console出来的都是7，原因是当我们点击调用callback的时候，函数去定义时作用域查找变量i，但是这个时候已经循环结束，i的值一直都是7，所以每次click都是打印的7。以前正确做法是在addEventListener处自己创建一个闭包来存储每次的变量副本</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; list.length; i++) &#123;</span><br><span class="line">   (<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">     <span class="keyword">var</span> j = i;</span><br><span class="line">     list[i].addEventListener(<span class="string">&quot;click&quot;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">       <span class="built_in">console</span>.log(j)</span><br><span class="line">     &#125;);</span><br><span class="line">   &#125;)();</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;现在嘛，只要for的时候i用let关键字来定义就好了….事实告诉我再用var我就是傻逼。(再吐个槽，var没有块级作用域真的是个傻逼东西)</p>
+<h3 id="2-2-this"><a href="#2-2-this" class="headerlink" title="2.2 this"></a>2.2 this</h3><p>&emsp;&emsp;关于this，js的this指向要判断runtime的调用环境，然后再根据代码几种绑定类型判断具体this是个啥。(像我这种java写习惯的一开始碰到这个this真的是蒙了)。</p>
+<ol>
+<li>调用环境在function中<br>如果是代码处于严格模式下严格模式则this是undefined，如果不是则指向window(这里有个很坑爹的情况，就是一块代码中严格模式和非严格模式混用….最终this的指向取决于写的this的位置是否处于严格模式代码块中…虽然我觉得我可能用不到这个知识点..)</li>
+<li>调用环境在object中<br>调用环境在object中this指向的就是object…书上还特意给了函数作为callback时以及函数以别名形式被调用时的情况，说了一堆this丢失…..其实都没必要，反正最终看的还是函数执行时环境即可…..针对这两种情况下面这个例子就很好理解</li>
+</ol>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;in function&#x27;</span>);</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="built_in">this</span>);<span class="comment">// should be ’window‘</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">obj</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;in object&#x27;</span>);</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="built_in">this</span>);<span class="comment">//should be &#x27;obj2&#x27;</span></span><br><span class="line">  foo();</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> obj2 = &#123;</span><br><span class="line">  child: obj,</span><br><span class="line">  b: <span class="number">3</span></span><br><span class="line">&#125;</span><br><span class="line">obj2.child()</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>使用function.prototype方法手动绑定<br>这个方法就是js提供了api让自己手动绑定this值呗，就是call apply bind 三个方法，具体这三个方法有啥用，<a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Function" target="_blank" rel="noopener">MDN</a>有，后面我也会有记录。</li>
+<li>new 操作符<br>js 的new操作符是个很神奇的东西，因为它new出来的东西永远是个object…所以new操作符下的所有this指向的都是new出来的object，例子如下</li>
+</ol>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">   <span class="built_in">console</span>.log(<span class="built_in">this</span>);<span class="comment">// 打印出来的是一个名为foo的object...</span></span><br><span class="line"> &#125;</span><br><span class="line"> <span class="keyword">var</span> a = <span class="keyword">new</span> foo();</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;这里还要着重说明下arrow function的this，指向的是外层环境的this而不是根据runtime环境判断this，这很关键，<strong>因为一般function需要看执行栈判断，但是arrow function则只需要看你代码的环境</strong>。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">      <span class="comment">// 箭头函数的this指向foo</span></span><br><span class="line">      <span class="built_in">console</span>.log(<span class="built_in">this</span>.a);</span><br><span class="line">    &#125;, <span class="number">100</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">var</span> obj = &#123;</span><br><span class="line">    a: <span class="number">2</span></span><br><span class="line">  &#125;;</span><br><span class="line">  foo.call(obj); <span class="comment">// 2</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">setTimeout</span>(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">      <span class="comment">// 一般函数的this要根据调用环境判断，所以这里timeout的callback的this是window</span></span><br><span class="line">      <span class="built_in">console</span>.log(<span class="built_in">this</span>);</span><br><span class="line">    &#125;, <span class="number">100</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">var</span> obj = &#123;</span><br><span class="line">    a: <span class="number">2</span></span><br><span class="line">  &#125;;</span><br><span class="line">  foo.call(obj); <span class="comment">// 2</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="3-bind-call-apply"><a href="#3-bind-call-apply" class="headerlink" title="3 bind call apply"></a>3 bind call apply</h2><p>&emsp;&emsp;终于是扯到这三个函数了，其实最开始写react的时候发现react在render里面的jsx的onclick绑定component方法有两种写法，但大致就是一种用arrow function一个是在constructor的时候用bind方法。当时云里雾里的，现在看了看js里面的这些概念终于是明白为啥arrow function能用了。click事件的执行环境肯定不在原组件上啦，那这个click的this就应该是根据最终callback执行时环境判定(仔细搜了一下，react的事件其实有一套自己的事件合成，所以其实jsx 里面的 onclick应该是指向最终调用的component的..好吧不是很确定)。那arrow function是可以将this指向代码书写环境，那就可以直接调用component里面的函数，那么bind是个什么吊东西…..</p>
+<ol>
+<li>bind()<br>bind创建返回一个新的函数(继承原函数)，其中bind的第一个参数会作为新函数的this指向，其余参数则会作为参数传入新函数。<del>那其实在constructor里面执行bind只是单纯的将当前component绑定到目标方法的this上面….为什么会和最终的callback的this绑一起…这就很费解了。</del>这个问题暂时留去给以后看react源码时候想，现在我们专注于这三个function。</li>
+<li>call apply<br>call apply 都是给函数指定this和参数并<strong>调用</strong>(bind是返回包装过的函数)，两者唯一区别是apply的参数是作为一个数组apply(this,[argArray])。原函数收到的是一个数组，call则是传入一个参数列表call(this,args1,args2….)。原函数收到的是一个个参数。</li>
+</ol>
+<p>最后呢，再提一个面试可能问道的问题，也比较现实的问题，如何实现bind()，因为bind()是es5标准，要兼容的话咱得加polyfill，其实<a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Function/bind" target="_blank" rel="noopener">MDN</a>上面有来着，而且也推荐了github上面一个实现bind的lib：<a href="https://github.com/Raynos/function-bind" target="_blank" rel="noopener">function-bind</a>。要我自己写的话…其实基本就是用一下call和apply…</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Function</span>.prototype.bind = <span class="function"><span class="keyword">function</span> (<span class="params">originThis</span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">var</span> args = <span class="built_in">Array</span>.prototype.slice.call(<span class="built_in">arguments</span>, <span class="number">1</span>);</span><br><span class="line">   <span class="comment">//这里的这个this就是需要bind的function</span></span><br><span class="line">   <span class="keyword">var</span> functionToBind = <span class="built_in">this</span>;</span><br><span class="line">   <span class="keyword">var</span> functionBound = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">   <span class="comment">// this instanceof functionBound === true时,说明返回的fBound被当做new的构造函数调用</span></span><br><span class="line">   <span class="comment">//new 的优先级大于bind，所以这里的this，应该是默认的this</span></span><br><span class="line">   <span class="keyword">var</span> finalThis = <span class="built_in">this</span> <span class="keyword">instanceof</span> functionBound ? <span class="built_in">this</span> : originThis;</span><br><span class="line"></span><br><span class="line">     <span class="keyword">return</span> functionToBind .apply(finalThis , args.concat(<span class="built_in">Array</span>.prototype.slice.call( <span class="built_in">arguments</span>)));</span><br><span class="line">   &#125;;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">return</span> functionBound ;</span><br><span class="line"> &#125;;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/javascript/" rel="tag"># javascript</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/06/30/redux-thunk%E4%BB%A5%E5%8F%8A%E7%AE%80%E6%98%93middleware%E6%9E%84%E5%BB%BA/" rel="next" title="Redux Thunk以及简易middleware构建">
+                <i class="fa fa-chevron-left"></i> Redux Thunk以及简易middleware构建
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/08/07/%E7%AE%80%E5%8D%95%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AAreact%E7%8E%AF%E5%A2%83%E5%B7%A5%E7%A8%8B%E5%8C%96%E7%8E%AF%E5%A2%831/" rel="prev" title="简单搭建一个react开发环境">
+                简单搭建一个react开发环境 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Tommy xia</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/Tommy0121" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-使用场景"><span class="nav-number">1.</span> <span class="nav-text">1 使用场景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-引申及思考"><span class="nav-number">2.</span> <span class="nav-text">2 引申及思考</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-闭包"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 闭包</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-this"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 this</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-bind-call-apply"><span class="nav-number">3.</span> <span class="nav-text">3 bind call apply</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tommy xia</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
