@@ -83,10 +83,10 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Jsx Virtual Dom">
 <meta property="og:url" content="http://tommy0121.github.io/2019/04/28/jsx-virtual-dom/index.html">
-<meta property="og:site_name" content="tommy的blog">
+<meta property="og:site_name" content="tommy的前端博客">
 <meta property="og:description" content="&amp;emsp;&amp;emsp;换了项目组，用react做东西也有段时间了，是时候记录一下学习使用中的遇到的一些问题。 jsx&amp;emsp;&amp;emsp;首先，最开始使用react就有的疑惑，render()函数里面return的很像html又不是html的东西是啥？react官网上面告诉我们这东西叫做jsx，并且推荐我们使用jsx来描述UI(其实react中也不大可能用其他方式来描述了吧..)。所以呢是事实">
 <meta property="article:published_time" content="2019-04-27T21:17:36.000Z">
-<meta property="article:modified_time" content="2020-09-23T01:15:22.737Z">
+<meta property="article:modified_time" content="2021-02-22T02:12:19.142Z">
 <meta property="article:author" content="Tommy xia">
 <meta property="article:tag" content="javascript">
 <meta property="article:tag" content="react">
@@ -126,7 +126,7 @@
 
 
 
-  <title>Jsx Virtual Dom | tommy的blog</title>
+  <title>Jsx Virtual Dom | tommy的前端博客</title>
   
 
 
@@ -156,7 +156,7 @@
     <div class="custom-logo-site-title">
       <a href="/"  class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
-        <span class="site-title">tommy的blog</span>
+        <span class="site-title">tommy的前端博客</span>
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
@@ -262,7 +262,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="tommy的blog">
+      <meta itemprop="name" content="tommy的前端博客">
     </span>
 
     
@@ -345,17 +345,17 @@
         <p>&emsp;&emsp;换了项目组，用react做东西也有段时间了，是时候记录一下学习使用中的遇到的一些问题。</p>
 <h2 id="jsx"><a href="#jsx" class="headerlink" title="jsx"></a>jsx</h2><p>&emsp;&emsp;首先，最开始使用react就有的疑惑，render()函数里面return的很像html又不是html的东西是啥？react官网上面告诉我们这东西叫做jsx，并且推荐我们使用jsx来描述UI(其实react中也不大可能用其他方式来描述了吧..)。所以呢是事实上render()里面return的其实不是原生的html，而是react团队设计的一个描述语言。</p>
 <p>&emsp;&emsp;但是又有一点很怪，我为啥不设计的更加贴近html，jsx里面所要传递的所有props都是小驼峰形式，即使是类似于margin-top之类，原生的html的属性，也要用marginTop来指定。</p>
-<p>&emsp;&emsp;其实呢，jsx是类xml语法的的JavaScript扩展本质上，jsx是React.createElement(component, props, …children)的语法糖。component满足React.Component或者ReactHtml的定义的类型(typescript 中会有@types/react可以在这里面查看)，props是一个object，不用说children肯定是close tag里面的子组件。</p>
+<p>&emsp;&emsp;其实呢，jsx本质上是类xml语法的JavaScript扩展，jsx是React.createElement(component, props, …children)的语法糖。component满足React.Component或者ReactHtml的定义的类型(typescript 中会有@types/react可以在这里面查看)，props是一个object，不用说children肯定是close tag里面的子组件。</p>
 <p>&emsp;&emsp;这下好说了，既然jsx的props本质上该是个object，那object里面的属性就该是小驼峰命名，而且html里面的class属性在JavaScript里面是保留字，就变成了className了。如下写法可能更直观一点</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">render</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">  <span class="keyword">const</span> props = &#123;<span class="attr">props1</span>: value,<span class="attr">props2</span>: value2&#125;</span><br><span class="line">  <span class="keyword">return</span>(<span class="xml"><span class="tag">&lt;<span class="name">Mycomponent</span> &#123;<span class="attr">...props</span>&#125;/&gt;</span></span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">render()&#123;</span><br><span class="line">  <span class="keyword">const</span> props = &#123;<span class="attr">props1</span>: value,<span class="attr">props2</span>: value2&#125;</span><br><span class="line">  <span class="keyword">return</span>(<span class="xml"><span class="tag">&lt;<span class="name">Mycomponent</span> &#123;<span class="attr">...props</span>&#125;/&gt;</span></span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>&emsp;&emsp;当然了，为了不让新手一开始就迷惑，最开始的tutorial肯定不可能是这么写的。</p>
 <h2 id="virtual-dom"><a href="#virtual-dom" class="headerlink" title="virtual dom"></a>virtual dom</h2><p>&emsp;&emsp;好了，第一个疑惑解决，第二个问题是，我为啥不是直接return的html，然后里面内置一些模板语法，就像以前的theamleaf，angular.js一样，完全够用啊，没必要就搞个jsx。</p>
 <p>&emsp;&emsp;因为在react设计里面，有个叫virtual dom的东西介于代码和真实dom之间。virtual dom作为UI描述存于内存，真实dom根据virtual dom描述生成。每次数据更新的后重新update virtual dom并与上一次的virtual dom比较，批量更新变化的部分。</p>
 <p>&emsp;&emsp;淦，那为啥又要搞个virtual dom？</p>
-<p>&emsp;&emsp;网上有很多说法是，直接操作dom的开销大，相比之下virtual dom快。但是我觉得最大的好处应该是与底层解耦，与底层解耦之后，就可以跨平台。</p>
+<p>&emsp;&emsp;<del>网上有很多说法是，直接操作dom的开销大，相比之下virtual dom快。</del>直接操作dom，没有react的用户体验好，原理见如下文章。但是我觉得最大的好处应该是与底层解耦，与底层解耦之后，就可以跨平台。</p>
 <p>&emsp;&emsp;virtual dom是对于UI的描述应该是属于元数据，最终生成啥平台的UI完全是不知道的，于是就有了react-native跨平台了。</p>
-<p>&emsp;&emsp;最后在浏览器中，virtual dom的优化工作以及原理再以下文章中<a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Functions" target="_blank" rel="noopener">diff</a></p>
+<p>&emsp;&emsp;最后在浏览器中，virtual dom的优化工作以及原理再以下文章中<a href="/2020/04/10/diff/">diff</a></p>
 
       
     </div>
@@ -477,7 +477,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-count">19</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -488,7 +488,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-count">4</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -499,7 +499,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-count">12</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

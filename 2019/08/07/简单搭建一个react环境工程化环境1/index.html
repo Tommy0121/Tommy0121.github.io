@@ -83,11 +83,11 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="简单搭建一个react开发环境">
 <meta property="og:url" content="http://tommy0121.github.io/2019/08/07/%E7%AE%80%E5%8D%95%E6%90%AD%E5%BB%BA%E4%B8%80%E4%B8%AAreact%E7%8E%AF%E5%A2%83%E5%B7%A5%E7%A8%8B%E5%8C%96%E7%8E%AF%E5%A2%831/index.html">
-<meta property="og:site_name" content="tommy的blog">
+<meta property="og:site_name" content="tommy的前端博客">
 <meta property="og:description" content="1一个正常的前端工程化环境&amp;emsp;&amp;emsp;想到react环境的话第一就是create-react-app呗，官方指定脚手架。然而，一个正常的前端开发环境，测试要有吧，生态组件要有吧，CI要有吧，就算不用typescript，起码的ES6要用上吧。仅仅是用上react，只需要在html头引入react库就够了，但是一个能用的前端工程化环境绝对不是一个引入了各种库的html就够了。   &amp;em">
 <meta property="og:image" content="https://s3.ax1x.com/2021/02/03/yKeTNd.png">
 <meta property="article:published_time" content="2019-08-06T23:03:33.000Z">
-<meta property="article:modified_time" content="2021-02-03T02:01:12.993Z">
+<meta property="article:modified_time" content="2021-02-21T04:45:03.655Z">
 <meta property="article:author" content="Tommy xia">
 <meta property="article:tag" content="javascript">
 <meta property="article:tag" content="react">
@@ -129,7 +129,7 @@
 
 
 
-  <title>简单搭建一个react开发环境 | tommy的blog</title>
+  <title>简单搭建一个react开发环境 | tommy的前端博客</title>
   
 
 
@@ -159,7 +159,7 @@
     <div class="custom-logo-site-title">
       <a href="/"  class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
-        <span class="site-title">tommy的blog</span>
+        <span class="site-title">tommy的前端博客</span>
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
@@ -265,7 +265,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="tommy的blog">
+      <meta itemprop="name" content="tommy的前端博客">
     </span>
 
     
@@ -347,7 +347,7 @@
       
         <h2 id="1一个正常的前端工程化环境"><a href="#1一个正常的前端工程化环境" class="headerlink" title="1一个正常的前端工程化环境"></a>1一个正常的前端工程化环境</h2><p>&emsp;&emsp;想到react环境的话第一就是create-react-app呗，官方指定脚手架。然而，一个正常的前端开发环境，测试要有吧，生态组件要有吧，CI要有吧，就算不用typescript，起码的ES6要用上吧。仅仅是用上react，只需要在html头引入react库就够了，但是一个能用的前端工程化环境绝对不是一个引入了各种库的html就够了。  </p>
 <p>&emsp;&emsp;话是这么说的，但是啥玩意儿都是从简到繁的，所以这里先搭建一个react的基础环境。  </p>
-<h2 id="2-router，network，ui，typescript，sass"><a href="#2-router，network，ui，typescript，sass" class="headerlink" title="2 router，network，ui，typescript，sass"></a>2 router，network，ui，typescript，sass</h2><p>&emsp;&emsp;路由使用connected-react-router，因为react-router-dom路由跳转都是包装好的，需要在方法中执行路由跳转必须使用这个包，具体情况如下见<a href="https://reactrouter.com/web/guides/deep-redux-integration" target="_blank" rel="noopener">Deep Redux Integration</a>。全局状态管理使用redux，（主要是没用过其他的状态管理库）。网络方面由于redux不能处理网络请求，所以使用redux-thunk。具体的请求库使用axios，（其实并没有用到很多axios相关的特性，只用到了一个能cancel network的方法）。UI用antd（项目上都是自己写的组件，但是有一说一人家组件比自己写的好多了）。然后Typescript也是需要的（都0202年了不会还有人不用typescript吧，不会吧不会吧）</p>
+<h2 id="2-router，network，ui，typescript，sass"><a href="#2-router，network，ui，typescript，sass" class="headerlink" title="2 router，network，ui，typescript，sass"></a>2 router，network，ui，typescript，sass</h2><p>&emsp;&emsp;路由使用connected-react-router，因为react-router-dom路由跳转都是包装好的，同时我们需要对router状态做一些处理，所以就需要用这个包，具体情况如下见<a href="https://reactrouter.com/web/guides/deep-redux-integration" target="_blank" rel="noopener">Deep Redux Integration</a>。全局状态管理使用redux，（主要是没用过其他的状态管理库）。网络方面由于redux不能处理网络请求，所以使用redux-thunk。具体的请求库使用axios，（其实并没有用到很多axios相关的特性，只用到了一个能cancel network的方法）。UI用antd（项目上都是自己写的组件，但是有一说一人家组件比自己写的好多了）。然后Typescript也是需要的（都0202年了不会还有人不用typescript吧，不会吧不会吧）</p>
 <p>&emsp;&emsp;第一个问题出现了，UI库的css不论是antd还是bootstrap的css文件都是没有css module的，当你在index.tsx文件中import css文件会一次性加载所有css。antd官方文档有提供解决方案，<a href="https://ant.design/docs/react/use-with-create-react-app-cn#%E9%AB%98%E7%BA%A7%E9%85%8D%E7%BD%AE" target="_blank" rel="noopener">antd按需加载</a>。这里的那个react-app-rewired可以在不eject react-script的情况下更改react-script的webpack配置。<br>&emsp;&emsp;然后install typescript，这里有个问题，那就是很多库没有定义过类型信息(比如react)。就需要install @type/react这样的东西，那如果有些东西在npm上面没有类型定义呢，比如我要导入一个svg，本来直接import就好了，但是typescript需要知道svg的类型信息，那就只能自己定义一个svg的类型。<br>&emsp;&emsp;在typescript里面申明类型信息，src里面建立一个index.d.ts如下写就好了  </p>
 <figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/// &lt;reference types="node" /&gt;</span></span><br><span class="line"><span class="comment">/// &lt;reference types="react" /&gt;</span></span><br><span class="line"><span class="comment">/// &lt;reference types="react-dom" /&gt;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">declare</span> <span class="keyword">module</span> '*.svg' &#123;</span><br><span class="line">  <span class="keyword">import</span> * <span class="keyword">as</span> React <span class="keyword">from</span> <span class="string">'react'</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">export</span> <span class="keyword">const</span> ReactComponent: React.FunctionComponent&lt;React.SVGProps&lt;SVGSVGElement&gt;&gt;;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> src: <span class="built_in">string</span>;</span><br><span class="line">  <span class="keyword">export</span> <span class="keyword">default</span> src;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -479,7 +479,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-count">19</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -490,7 +490,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-count">4</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -501,7 +501,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-count">12</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

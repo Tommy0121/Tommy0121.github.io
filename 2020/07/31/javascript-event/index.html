@@ -83,15 +83,15 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="JavaScript事件">
 <meta property="og:url" content="http://tommy0121.github.io/2020/07/31/javascript-event/index.html">
-<meta property="og:site_name" content="tommy的blog">
+<meta property="og:site_name" content="tommy的前端博客">
 <meta property="og:description" content="&amp;emsp;&amp;emsp;最近看JavaScript忍者书，看到一个可以记录一下的事件的特性，还有就是碰到有人问我了一个事件的问题，我这里记录一下关于事件添加、事件触发的一点内容。 事件添加&amp;emsp;&amp;emsp;事件添加一般是两种方式。建议只使用addEventListener这个函数添加&amp;emsp;&amp;emsp;一种是直接给元素添加属性: 1&lt;button onclick&#x3D;&amp;quo">
-<meta property="og:image" content="http://123.207.87.254:3999/uploads//2020-08-04/d0bfd835.png">
+<meta property="og:image" content="https://i.loli.net/2021/02/19/MWJdGRSQp4HPx8E.png">
 <meta property="article:published_time" content="2020-07-31T05:34:17.000Z">
-<meta property="article:modified_time" content="2020-09-23T01:15:22.736Z">
+<meta property="article:modified_time" content="2021-02-21T04:45:03.647Z">
 <meta property="article:author" content="Tommy xia">
 <meta property="article:tag" content="javascript">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://123.207.87.254:3999/uploads//2020-08-04/d0bfd835.png">
+<meta name="twitter:image" content="https://i.loli.net/2021/02/19/MWJdGRSQp4HPx8E.png">
 
 
 
@@ -127,7 +127,7 @@
 
 
 
-  <title>JavaScript事件 | tommy的blog</title>
+  <title>JavaScript事件 | tommy的前端博客</title>
   
 
 
@@ -157,7 +157,7 @@
     <div class="custom-logo-site-title">
       <a href="/"  class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
-        <span class="site-title">tommy的blog</span>
+        <span class="site-title">tommy的前端博客</span>
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
@@ -263,7 +263,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="tommy的blog">
+      <meta itemprop="name" content="tommy的前端博客">
     </span>
 
     
@@ -348,12 +348,12 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;button onclick&#x3D;&quot;(function(e)&#123;console.log(e)&#125;)(event)&quot;&gt;adf&lt;&#x2F;button&gt;</span><br></pre></td></tr></table></figure>
 <p>&emsp;&emsp;另外一种是通过eventListener添加事件:</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;button id&#x3D;&quot;btn&quot;&gt;adf&lt;&#x2F;button&gt;</span><br><span class="line">    &lt;script&gt;</span><br><span class="line">        const element &#x3D; document.getElementById(&#39;btn&#39;);</span><br><span class="line">        element.addEventListener(&#39;click&#39;,() &#x3D;&gt; &#123;</span><br><span class="line">            console.log(&#39;object&#39;);</span><br><span class="line">        &#125;)</span><br><span class="line">        element.addEventListener(&#39;click&#39;,() &#x3D;&gt; &#123;</span><br><span class="line">            console.log(&#39;object&#39;);</span><br><span class="line">        &#125;)</span><br><span class="line">    &lt;&#x2F;script&gt;</span><br></pre></td></tr></table></figure>
-<p><del>吐槽一下两年前的我，当时写页面还特么疯狂的纠结为啥我 <code>&lt;button onclick=&quot;function(e)&#123;console.log(e)&#125;&quot;&gt;adf&lt;/button&gt;</code>没有效果。</del><br>&emsp;&emsp;这两种方式，其实没有特别大的，通过添加onclick属性最主要问题是， <strong>它无法添加多个listener</strong>，虽然里面本质上是一个代码块，你可以在代码块里面尽可能地多调用function，但是代码块意味着你无法重复的添加listener，因为你后面重新指定的listener会将前面的覆盖。<br>&emsp;&emsp;addEventListener 就没这个问题，它会按照代码中添加的listener先后顺序，顺序执行所有的listener。</p>
+<p><del>吐槽一下两年前的我，当时写页面还特么疯狂的纠结为啥我 <code>&lt;button onclick=&quot;function(e){console.log(e)}&quot;&gt;adf&lt;/button&gt;</code>没有效果。</del><br>&emsp;&emsp;这两种方式，其实没有特别大的，通过添加onclick属性最主要问题是， <strong>它无法添加多个listener</strong>，虽然里面本质上是一个代码块，你可以在代码块里面尽可能地多调用function，但是代码块意味着你无法重复的添加listener，因为你后面重新指定的listener会将前面的覆盖。<br>&emsp;&emsp;addEventListener 就没这个问题，它会按照代码中添加的listener先后顺序，顺序执行所有的listener。</p>
 <h1 id="事件触发-派发"><a href="#事件触发-派发" class="headerlink" title="事件触发(派发)"></a>事件触发(派发)</h1><p>&emsp;&emsp;正常来说，我一般都是直接获得element，然后调用element中的click之类的方法</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;button id&#x3D;&quot;btn&quot; onclick&#x3D;&quot;(function(e)&#123;console.log(e)&#125;)(event)&quot;&gt;adf&lt;&#x2F;button&gt;</span><br><span class="line">  &lt;script&gt;</span><br><span class="line">      const element &#x3D; document.getElementById(&#39;btn&#39;);</span><br><span class="line">     element.click();</span><br><span class="line">  &lt;&#x2F;script&gt;</span><br></pre></td></tr></table></figure>
 <p>&emsp;&emsp;但是这样会有个问题，那就是调用click()的时候无法传递参数(至少我现在一眼看不出来)，如果需要传递参数的话需要用到<strong><a href="(https://developer.mozilla.org/zh-CN/docs/Web/API/EventTarget/dispatchEvent)">dispatchEvent</a></strong>方法<br>&emsp;&emsp;会需要你传入一个类型为Event的参数，我们可以通过定制event的值来进行参数传入，刚好有个customEvent它里面有个属性detail没什么其他用处，就是用来给人存储数据的，如下所示</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;button id&#x3D;&quot;btn&quot; onclick&#x3D;&quot;(function(e)&#123;console.log(e)&#125;)(event)&quot;&gt;adf&lt;&#x2F;button&gt;</span><br><span class="line">   &lt;script&gt;</span><br><span class="line">       const element &#x3D; document.getElementById(&#39;btn&#39;);</span><br><span class="line">       const event &#x3D; new CustomEvent(&#39;click&#39;, &#123; detail: &#39;elem.dataset.time&#39; &#125;);</span><br><span class="line">      element.dispatchEvent(event);</span><br><span class="line">   &lt;&#x2F;script&gt;</span><br></pre></td></tr></table></figure>
-<p>&emsp;&emsp;打印出的event，可以看到，detail被更改并传入listener了。<br><img src="http://123.207.87.254:3999/uploads//2020-08-04/d0bfd835.png" alt=""><br>&emsp;&emsp;说实话，人家问我事件派发的时候我是蒙蔽的，派发？消息派发？观察者模式？发布订阅模式？我事件需要有这种设计模式设计的时候？不是一般都是数据接收转发时候用到的？<br>&emsp;&emsp;后来才知道，问的是事件触发，淦，我特么怀疑有人翻译书的时候出问题了，就嗯把dispatch翻译成派发，其实就是代码中事件的触发= =。</p>
+<p>&emsp;&emsp;打印出的event，可以看到，detail被更改并传入listener了。<br><img src="https://i.loli.net/2021/02/19/MWJdGRSQp4HPx8E.png" alt=""><br>&emsp;&emsp;说实话，人家问我事件派发的时候我是蒙蔽的，派发？消息派发？观察者模式？发布订阅模式？我事件需要有这种设计模式设计的时候？不是一般都是数据接收转发时候用到的？<br>&emsp;&emsp;后来才知道，问的是事件触发，淦，我特么怀疑有人翻译书的时候出问题了，就嗯把dispatch翻译成派发，其实就是代码中事件的触发= =。</p>
 <h1 id="事件循环"><a href="#事件循环" class="headerlink" title="事件循环"></a>事件循环</h1><p>&emsp;&emsp;插一个阮一峰的博客，比较建议看这个，写的很清楚。<a href="http://www.ruanyifeng.com/blog/2014/10/event-loop.html" target="_blank" rel="noopener">JavaScript 运行机制详解：再谈Event Loop</a>。<br>&emsp;&emsp;JavaScript本身是单线程的，但是为了事件响应，或者网络请求不阻塞本身的线程，JavaScript设计了任务队列来放置所有的异步任务。当主线程已有任务执行完成后会去任务队列读取所有的异步任务进行执行。<br>&emsp;&emsp;这里要注意，任务队列也是分类的，<strong>分为微任务和宏任务，两者之间的执行顺序也有先后之分，其中宏任务，是宿主环境发起的任务，比如node，比如浏览器，微任务是js脚本引擎发起的任务</strong>。<del>貌似面视常见欸</del>。<strong>具体顺序是，执行完单个宏任务后执行所有微任务，然后再执行下个宏任务</strong>，推荐一下一个掘金老哥的文章<a href="https://juejin.im/post/6844903764202094606" target="_blank" rel="noopener">一次弄懂Event Loop</a><br>&emsp;&emsp;在这里需要知道的是script，settimeout，setinterval的callback是添加到宏任务，然后promise.then catch是微任务。以此为例，可以看一下以下代码</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">console.log(&#39;start&#39;)</span><br><span class="line">setTimeout(() &#x3D;&gt; &#123;</span><br><span class="line">  console.log(&#39;timer1&#39;)</span><br><span class="line">  Promise.resolve().then(function() &#123;</span><br><span class="line">    console.log(&#39;promise1&#39;)</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;, 0)</span><br><span class="line">setTimeout(() &#x3D;&gt; &#123;</span><br><span class="line">  console.log(&#39;timer2&#39;)</span><br><span class="line">  Promise.resolve().then(function() &#123;</span><br><span class="line">    console.log(&#39;promise2&#39;)</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;, 0)</span><br><span class="line">Promise.resolve().then(function() &#123;</span><br><span class="line">  console.log(&#39;promise3&#39;)</span><br><span class="line">&#125;)</span><br><span class="line">console.log(&#39;end&#39;)</span><br></pre></td></tr></table></figure>
 
@@ -482,7 +482,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-count">19</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -493,7 +493,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-count">4</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -504,7 +504,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-count">12</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

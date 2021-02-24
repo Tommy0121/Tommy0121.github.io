@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="javascript,react," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="&amp;emsp;&amp;emsp;首先感谢司徒正美大佬写的文章，让我大致了解了fiber是个什么东西。（愿天堂没有996 T_T）这里推荐两篇大佬的文章React Fiber架构，React Fiber的优先级调度机制与事件系统，第一篇讲了fiber行为，第二篇讲解了fiber事件分片的机制 &amp;emsp;&amp;emsp;先康一康react官方对于concurrent的介绍，其实就是当页面元素过多的时候，每次更改">
+<meta property="og:type" content="article">
+<meta property="og:title" content="fiber以及concurrent mode">
+<meta property="og:url" content="http://tommy0121.github.io/2021/02/22/fiber/index.html">
+<meta property="og:site_name" content="tommy的前端博客">
+<meta property="og:description" content="&amp;emsp;&amp;emsp;首先感谢司徒正美大佬写的文章，让我大致了解了fiber是个什么东西。（愿天堂没有996 T_T）这里推荐两篇大佬的文章React Fiber架构，React Fiber的优先级调度机制与事件系统，第一篇讲了fiber行为，第二篇讲解了fiber事件分片的机制 &amp;emsp;&amp;emsp;先康一康react官方对于concurrent的介绍，其实就是当页面元素过多的时候，每次更改">
+<meta property="article:published_time" content="2021-02-22T01:25:36.000Z">
+<meta property="article:modified_time" content="2021-02-24T05:59:17.204Z">
+<meta property="article:author" content="Tommy xia">
+<meta property="article:tag" content="javascript">
+<meta property="article:tag" content="react">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://tommy0121.github.io/2021/02/22/fiber/"/>
+
+
+
+
+
+  <title>fiber以及concurrent mode | tommy的前端博客</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">tommy的前端博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description"></h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-主页">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            主页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-标签">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-分类">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-归档">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://tommy0121.github.io/2021/02/22/fiber/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tommy xia">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="tommy的前端博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">fiber以及concurrent mode</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-02-22T09:25:36+08:00">
+                2021-02-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/theory/" itemprop="url" rel="index">
+                    <span itemprop="name">theory</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>&emsp;&emsp;首先感谢司徒正美大佬写的文章，让我大致了解了fiber是个什么东西。（愿天堂没有996 T_T）这里推荐两篇大佬的文章<a href="https://zhuanlan.zhihu.com/p/37095662" target="_blank" rel="noopener">React Fiber架构</a>，<a href="https://zhuanlan.zhihu.com/p/95443185" target="_blank" rel="noopener">React Fiber的优先级调度机制与事件系统</a>，第一篇讲了fiber行为，第二篇讲解了fiber事件分片的机制</p>
+<p>&emsp;&emsp;先康一康react官方对于concurrent的<a href="https://reactjs.org/docs/concurrent-mode-intro.html" target="_blank" rel="noopener">介绍</a>，其实就是当页面元素过多的时候，每次更改涉及到的元素过多时，由于原算法是深度遍历v-dom去修改状态，当遍历花费时间过多时会造成页面卡顿。而fiber架构允许遍历被打断去响应高优先级操作，让页面更加流畅。具体demo可以从以下例子中看到。<a href="https://claudiopro.github.io/react-fiber-vs-stack-demo/。" target="_blank" rel="noopener">https://claudiopro.github.io/react-fiber-vs-stack-demo/。</a></p>
+<p>&emsp;&emsp;为了让每一个节点都有能力去遍历整棵树，fiber设计了三个属性return child sibling，三者分别对应该节点的父节点、子节点、右侧兄弟节点。这样的话我们每次拿到一个节点都有能力去获得发生变化的根节点、访问到未被更新过的节点（如果是树状结构，每一个节点就只能访问到其子节点了）。<strong>fiber结构可以满足先前的所有特性，同时还可以衍生出current mode的特性，所以现在react的v-dom已经是fiber结构了(react 16开始)</strong></p>
+<p>&emsp;&emsp;这里首先明确一个点，fiber并不能提高代码执行效率，相反，fiber降低了执行效率，但是由于某些高优先级事件会优先执行，所以它只是<strong>优化了用户体验</strong>，真正从diff开始到渲染结束花的时间时更长的。具体可以参考上述<em>React Fiber架构</em>文章内的例子，分批次渲染页面可以让页面提前显示出来(常说的首屏响应时间)。</p>
+<p>&emsp;&emsp;具体如何在diff过程中停止呢，react设计了多个优先级，优先级有对应值，这个对应值就是这个fiber的更新延迟时间，最快的值为-1，就是立即更新，最慢的10000，最佳计时api其实是，requestIdleCallback但是这个api兼容性不行，而且它是个浏览器api，react要支持server render是不能用这个api的，所以react源码定义了一个requestHostTimeout。本质上是requestIdleCallback的polyfill，兼容node和不同浏览器用(其实本质还是用的setTimeout和requestAnimationFrame，现在已经不用requestAnimationFrame了使用的messageChannel，具体原因可以看<a href="https://github.com/facebook/react/pull/16214" target="_blank" rel="noopener">以下commit</a>)，似乎是考虑到硬件刷新率不同而做的更改。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 优先级定义如下</span><br><span class="line">var maxSigned31BitInt &#x3D; 1073741823; &#x2F;&#x2F; Times out immediately</span><br><span class="line"></span><br><span class="line">var IMMEDIATE_PRIORITY_TIMEOUT &#x3D; -1; &#x2F;&#x2F; Eventually times out</span><br><span class="line"></span><br><span class="line">var USER_BLOCKING_PRIORITY_TIMEOUT &#x3D; 250;</span><br><span class="line">var NORMAL_PRIORITY_TIMEOUT &#x3D; 5000;</span><br><span class="line">var LOW_PRIORITY_TIMEOUT &#x3D; 10000; &#x2F;&#x2F; Never times out</span><br><span class="line"></span><br><span class="line">var IDLE_PRIORITY_TIMEOUT &#x3D; maxSigned31BitInt; &#x2F;&#x2F; Tasks are stored on a min heap</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">requestHostTimeout &#x3D; function (callback, ms) &#123;</span><br><span class="line">    taskTimeoutID &#x3D; _setTimeout(function () &#123;</span><br><span class="line">    callback(getCurrentTime());</span><br><span class="line">    &#125;, ms);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;现在如果不考虑如何将需要更新fiber节点添加进入更新队列，而只是单纯的看调度方法的话，主要有如下代码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">function unstable_scheduleCallback(priorityLevel, callback, options) &#123;</span><br><span class="line">  var currentTime &#x3D; exports.unstable_now();</span><br><span class="line">  var startTime;</span><br><span class="line"></span><br><span class="line">  if (typeof options &#x3D;&#x3D;&#x3D; &#39;object&#39; &amp;&amp; options !&#x3D;&#x3D; null) &#123;</span><br><span class="line">    var delay &#x3D; options.delay;</span><br><span class="line"></span><br><span class="line">    if (typeof delay &#x3D;&#x3D;&#x3D; &#39;number&#39; &amp;&amp; delay &gt; 0) &#123;</span><br><span class="line">      startTime &#x3D; currentTime + delay;</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">      startTime &#x3D; currentTime;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125; else &#123;</span><br><span class="line">    startTime &#x3D; currentTime;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  var timeout;</span><br><span class="line"></span><br><span class="line">  switch (priorityLevel) &#123;</span><br><span class="line">    case ImmediatePriority:</span><br><span class="line">      timeout &#x3D; IMMEDIATE_PRIORITY_TIMEOUT;</span><br><span class="line">      break;</span><br><span class="line"></span><br><span class="line">    case UserBlockingPriority:</span><br><span class="line">      timeout &#x3D; USER_BLOCKING_PRIORITY_TIMEOUT;</span><br><span class="line">      break;</span><br><span class="line"></span><br><span class="line">    case IdlePriority:</span><br><span class="line">      timeout &#x3D; IDLE_PRIORITY_TIMEOUT;</span><br><span class="line">      break;</span><br><span class="line"></span><br><span class="line">    case LowPriority:</span><br><span class="line">      timeout &#x3D; LOW_PRIORITY_TIMEOUT;</span><br><span class="line">      break;</span><br><span class="line"></span><br><span class="line">    case NormalPriority:</span><br><span class="line">    default:</span><br><span class="line">      timeout &#x3D; NORMAL_PRIORITY_TIMEOUT;</span><br><span class="line">      break;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  var expirationTime &#x3D; startTime + timeout;</span><br><span class="line">  var newTask &#x3D; &#123;</span><br><span class="line">    id: taskIdCounter++,</span><br><span class="line">    callback: callback,</span><br><span class="line">    priorityLevel: priorityLevel,</span><br><span class="line">    startTime: startTime,</span><br><span class="line">    expirationTime: expirationTime,</span><br><span class="line">    sortIndex: -1</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  &#123;</span><br><span class="line">    newTask.isQueued &#x3D; false;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  if (startTime &gt; currentTime) &#123;</span><br><span class="line">    &#x2F;&#x2F; This is a delayed task.</span><br><span class="line">    newTask.sortIndex &#x3D; startTime;</span><br><span class="line">    push(timerQueue, newTask);</span><br><span class="line"></span><br><span class="line">    if (peek(taskQueue) &#x3D;&#x3D;&#x3D; null &amp;&amp; newTask &#x3D;&#x3D;&#x3D; peek(timerQueue)) &#123;</span><br><span class="line">      &#x2F;&#x2F; All tasks are delayed, and this is the task with the earliest delay.</span><br><span class="line">      if (isHostTimeoutScheduled) &#123;</span><br><span class="line">        &#x2F;&#x2F; Cancel an existing timeout.</span><br><span class="line">        cancelHostTimeout();</span><br><span class="line">      &#125; else &#123;</span><br><span class="line">        isHostTimeoutScheduled &#x3D; true;</span><br><span class="line">      &#125; &#x2F;&#x2F; Schedule a timeout.</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">      requestHostTimeout(handleTimeout, startTime - currentTime);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125; else &#123;</span><br><span class="line">    newTask.sortIndex &#x3D; expirationTime;</span><br><span class="line">    push(taskQueue, newTask);</span><br><span class="line"></span><br><span class="line">    &#123;</span><br><span class="line">      markTaskStart(newTask, currentTime);</span><br><span class="line">      newTask.isQueued &#x3D; true;</span><br><span class="line">    &#125; &#x2F;&#x2F; Schedule a host callback, if needed. If we&#39;re already performing work,</span><br><span class="line">    &#x2F;&#x2F; wait until the next time we yield.</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    if (!isHostCallbackScheduled &amp;&amp; !isPerformingWork) &#123;</span><br><span class="line">      isHostCallbackScheduled &#x3D; true;</span><br><span class="line">      requestHostCallback(flushWork);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  return newTask;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">  var port &#x3D; channel.port2;</span><br><span class="line">  channel.port1.onmessage &#x3D; performWorkUntilDeadline;</span><br><span class="line"></span><br><span class="line">  requestHostCallback &#x3D; function (callback) &#123;</span><br><span class="line">    scheduledHostCallback &#x3D; callback;</span><br><span class="line"></span><br><span class="line">    if (!isMessageLoopRunning) &#123;</span><br><span class="line">      isMessageLoopRunning &#x3D; true;</span><br><span class="line">      port.postMessage(null);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  var performWorkUntilDeadline &#x3D; function () &#123;</span><br><span class="line">    if (scheduledHostCallback !&#x3D;&#x3D; null) &#123;</span><br><span class="line">      var currentTime &#x3D; exports.unstable_now(); &#x2F;&#x2F; Yield after &#96;yieldInterval&#96; ms, regardless of where we are in the vsync</span><br><span class="line">      &#x2F;&#x2F; cycle. This means there&#39;s always time remaining at the beginning of</span><br><span class="line">      &#x2F;&#x2F; the message event.</span><br><span class="line"></span><br><span class="line">      deadline &#x3D; currentTime + yieldInterval;</span><br><span class="line">      var hasTimeRemaining &#x3D; true;</span><br><span class="line"></span><br><span class="line">      try &#123;</span><br><span class="line">        var hasMoreWork &#x3D; scheduledHostCallback(hasTimeRemaining, currentTime);</span><br><span class="line"></span><br><span class="line">        if (!hasMoreWork) &#123;</span><br><span class="line">          isMessageLoopRunning &#x3D; false;</span><br><span class="line">          scheduledHostCallback &#x3D; null;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">          &#x2F;&#x2F; If there&#39;s more work, schedule the next message event at the end</span><br><span class="line">          &#x2F;&#x2F; of the preceding one.</span><br><span class="line">          port.postMessage(null);</span><br><span class="line">        &#125;</span><br><span class="line">      &#125; catch (error) &#123;</span><br><span class="line">        &#x2F;&#x2F; If a scheduler task throws, exit the current browser task so the</span><br><span class="line">        &#x2F;&#x2F; error can be observed.</span><br><span class="line">        port.postMessage(null);</span><br><span class="line">        throw error;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">      isMessageLoopRunning &#x3D; false;</span><br><span class="line">    &#125; &#x2F;&#x2F; Yielding to the browser will give it a chance to paint, so we can</span><br><span class="line">  &#125;;</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;这里的主要入口时unstable_scheduleCallback，跑到react-dom里面找这个代码的相关引用，可以直接找到一下调用链commitWork -&gt; commitHydratedContainer -&gt; retryIfBlockedOn -&gt; scheduleCallbackIfUnblocked -&gt; unstable_scheduleCallback。这里就很清晰这个unstable_scheduleCallback就是最终commitWork的实现。</p>
+<p>&emsp;&emsp;这里就很容易就能看懂逻辑了！在commitWork之后，执行requestHostCallback，requestHostCallback执行postMessage，然后MessageChannel接收到消息之后继续执行requestHostCallback，一直持续到没有work为止，至于什么时候没有work呢，就是任务队列里面没有任务，或者时间到deadline了，具体是通过requestHostCallback来判断，我们通过这个函数去找，可以找到最终return 的是workLoop函数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">function workLoop(hasTimeRemaining, initialTime) &#123;</span><br><span class="line">  var currentTime &#x3D; initialTime;</span><br><span class="line">  advanceTimers(currentTime);</span><br><span class="line">  currentTask &#x3D; peek(taskQueue);</span><br><span class="line"></span><br><span class="line">  while (currentTask !&#x3D;&#x3D; null &amp;&amp; !(enableSchedulerDebugging )) &#123;</span><br><span class="line">    if (currentTask.expirationTime &gt; currentTime &amp;&amp; (!hasTimeRemaining || exports.unstable_shouldYield())) &#123;</span><br><span class="line">      &#x2F;&#x2F; This currentTask hasn&#39;t expired, and we&#39;ve reached the deadline.</span><br><span class="line">      break;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    var callback &#x3D; currentTask.callback;</span><br><span class="line"></span><br><span class="line">    if (typeof callback &#x3D;&#x3D;&#x3D; &#39;function&#39;) &#123;</span><br><span class="line">      currentTask.callback &#x3D; null;</span><br><span class="line">      currentPriorityLevel &#x3D; currentTask.priorityLevel;</span><br><span class="line">      var didUserCallbackTimeout &#x3D; currentTask.expirationTime &lt;&#x3D; currentTime;</span><br><span class="line">      markTaskRun(currentTask, currentTime);</span><br><span class="line">      var continuationCallback &#x3D; callback(didUserCallbackTimeout);</span><br><span class="line">      currentTime &#x3D; exports.unstable_now();</span><br><span class="line"></span><br><span class="line">      if (typeof continuationCallback &#x3D;&#x3D;&#x3D; &#39;function&#39;) &#123;</span><br><span class="line">        currentTask.callback &#x3D; continuationCallback;</span><br><span class="line">        markTaskYield(currentTask, currentTime);</span><br><span class="line">      &#125; else &#123;</span><br><span class="line">        &#123;</span><br><span class="line">          markTaskCompleted(currentTask, currentTime);</span><br><span class="line">          currentTask.isQueued &#x3D; false;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        if (currentTask &#x3D;&#x3D;&#x3D; peek(taskQueue)) &#123;</span><br><span class="line">          pop(taskQueue);</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      advanceTimers(currentTime);</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">      pop(taskQueue);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    currentTask &#x3D; peek(taskQueue);</span><br><span class="line">  &#125; &#x2F;&#x2F; Return whether there&#39;s additional work</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;看见了终于看见了，currentTask.expirationTime &gt; currentTime &amp;&amp; (!hasTimeRemaining || exports.unstable_shouldYield())这个条件，判断是否时间结束或者是否应该暂停(暂停update也是concurrent mode的一个特性嗷)，那具体这个task.expriationTime计算呢，是在unstable_scheduleCallback中，值就是当前时间+优先级的值。</p>
+<p>&emsp;&emsp;到此为止，concurrent mode的调度，大致就是这样了，具体关于如何去遍历fiber，什么时候去commitWork，阔以自己看看源码(因为我还没去看这块代码，XD)</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/javascript/" rel="tag"># javascript</a>
+          
+            <a href="/tags/react/" rel="tag"># react</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/01/24/mobile-fquent-question/" rel="next" title="常见移动端页面开发问题">
+                <i class="fa fa-chevron-left"></i> 常见移动端页面开发问题
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/02/24/vite/" rel="prev" title="vite">
+                vite <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Tommy xia</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/Tommy0121" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tommy xia</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

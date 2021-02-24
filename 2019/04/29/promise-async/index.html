@@ -79,19 +79,19 @@
 
 
 
-<meta name="description" content="&amp;emsp;&amp;emsp;首先声明想要记录这个东西上下文。在之前只用过fetch和ajax，就是网络请求的时候一般都是fetch().then().catch()这样的promise链式调用，然而项目里面看见的api接口访问长这样   12345678910apiCaller()&amp;#123; fetch(url)&amp;#125;；async aplClient()&amp;#123;  try&amp;#123;">
+<meta name="description" content="&amp;emsp;&amp;emsp;首先声明想要记录这个东西上下文。在之前只用过fetch和ajax，就是网络请求的时候一般都是fetch().then().catch()这样的promise链式调用，然而项目里面看见的api接口访问长这样   123456789apiCaller()&amp;#123; fetch(url)&amp;#125;；async aplClient()&amp;#123;  try&amp;#123;    c">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Promise Async">
 <meta property="og:url" content="http://tommy0121.github.io/2019/04/29/promise-async/index.html">
-<meta property="og:site_name" content="tommy的blog">
-<meta property="og:description" content="&amp;emsp;&amp;emsp;首先声明想要记录这个东西上下文。在之前只用过fetch和ajax，就是网络请求的时候一般都是fetch().then().catch()这样的promise链式调用，然而项目里面看见的api接口访问长这样   12345678910apiCaller()&amp;#123; fetch(url)&amp;#125;；async aplClient()&amp;#123;  try&amp;#123;">
-<meta property="og:image" content="http://123.207.87.254:3999/uploads/2020-07-30/233190e4.png">
+<meta property="og:site_name" content="tommy的前端博客">
+<meta property="og:description" content="&amp;emsp;&amp;emsp;首先声明想要记录这个东西上下文。在之前只用过fetch和ajax，就是网络请求的时候一般都是fetch().then().catch()这样的promise链式调用，然而项目里面看见的api接口访问长这样   123456789apiCaller()&amp;#123; fetch(url)&amp;#125;；async aplClient()&amp;#123;  try&amp;#123;    c">
+<meta property="og:image" content="https://i.loli.net/2021/02/19/ZFCYpJ7IE54WQbm.png">
 <meta property="article:published_time" content="2019-04-28T21:41:10.000Z">
-<meta property="article:modified_time" content="2020-09-23T01:15:22.738Z">
+<meta property="article:modified_time" content="2021-02-21T04:45:03.652Z">
 <meta property="article:author" content="Tommy xia">
 <meta property="article:tag" content="javascript">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://123.207.87.254:3999/uploads/2020-07-30/233190e4.png">
+<meta name="twitter:image" content="https://i.loli.net/2021/02/19/ZFCYpJ7IE54WQbm.png">
 
 
 
@@ -127,7 +127,7 @@
 
 
 
-  <title>Promise Async | tommy的blog</title>
+  <title>Promise Async | tommy的前端博客</title>
   
 
 
@@ -157,7 +157,7 @@
     <div class="custom-logo-site-title">
       <a href="/"  class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
-        <span class="site-title">tommy的blog</span>
+        <span class="site-title">tommy的前端博客</span>
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
@@ -263,7 +263,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="tommy的blog">
+      <meta itemprop="name" content="tommy的前端博客">
     </span>
 
     
@@ -344,13 +344,13 @@
 
       
         <p>&emsp;&emsp;首先声明想要记录这个东西上下文。在之前只用过fetch和ajax，就是网络请求的时候一般都是fetch().then().catch()这样的promise链式调用，然而项目里面看见的api接口访问长这样  </p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">apiCaller</span>(<span class="params"></span>)</span>&#123; fetch(url)&#125;；</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="title">aplClient</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">  <span class="keyword">try</span>&#123;</span><br><span class="line">    <span class="keyword">const</span> result = <span class="keyword">await</span> apiCaller();</span><br><span class="line">  &#125;<span class="function"><span class="title">catch</span>(<span class="params">error</span>)</span>&#123;</span><br><span class="line">    doErrorExcution(error);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">apiCaller()&#123; fetch(url)&#125;；</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> aplClient()&#123;</span><br><span class="line">  <span class="keyword">try</span>&#123;</span><br><span class="line">    <span class="keyword">const</span> result = <span class="keyword">await</span> apiCaller();</span><br><span class="line">  &#125;<span class="keyword">catch</span>(error)&#123;</span><br><span class="line">    doErrorExcution(error);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>&emsp;&emsp;try catch好说，啥语言都有的语法，但是这个await是个啥….8说了，查资料去…  </p>
 <h2 id="async-await"><a href="#async-await" class="headerlink" title="async await"></a>async await</h2><p>&emsp;&emsp;首先，async和await使用方法。await必须在async方法内，当执行到await时候，await后面的语句会在await语句执行完之后执行。还有就是await 执行完赋予变量是Promise.resolve()里面的值，如果有error则直接进catch。<br>&emsp;&emsp;咱先搞个demo试试，首先我不加await关键字  </p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"> <span class="keyword">const</span> excuteAfterOneSec = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">   <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="params">resolve</span> =&gt;</span> &#123;</span><br><span class="line">     <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">       resolve(<span class="string">&#x27;1&#x27;</span>);</span><br><span class="line">       <span class="built_in">console</span>.log(<span class="string">&#x27;1 sec&#x27;</span>);</span><br><span class="line">     &#125;, <span class="number">1000</span>);</span><br><span class="line">   &#125;)</span><br><span class="line"> &#125;</span><br><span class="line"> <span class="keyword">const</span> excuteAfterTwoSec = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">   <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="params">resolve</span> =&gt;</span> &#123;</span><br><span class="line">     <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">       resolve(<span class="string">&#x27;2&#x27;</span>);</span><br><span class="line">       <span class="built_in">console</span>.log(<span class="string">&#x27;2 sec&#x27;</span>);</span><br><span class="line">     &#125;, <span class="number">2000</span>);</span><br><span class="line">   &#125;)</span><br><span class="line"> &#125;;</span><br><span class="line"><span class="keyword">const</span> example = <span class="keyword">async</span> () =&gt; &#123;</span><br><span class="line">   <span class="keyword">await</span> excuteAfterTwoSec();</span><br><span class="line">   <span class="keyword">await</span> excuteAfterOneSec();</span><br><span class="line"> &#125;</span><br><span class="line"> <span class="built_in">console</span>.log(example());</span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"> <span class="keyword">const</span> excuteAfterOneSec = <span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">   <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="params">resolve</span> =&gt;</span> &#123;</span><br><span class="line">     setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">       resolve(<span class="string">'1'</span>);</span><br><span class="line">       <span class="built_in">console</span>.log(<span class="string">'1 sec'</span>);</span><br><span class="line">     &#125;, <span class="number">1000</span>);</span><br><span class="line">   &#125;)</span><br><span class="line"> &#125;</span><br><span class="line"> <span class="keyword">const</span> excuteAfterTwoSec = <span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">   <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="params">resolve</span> =&gt;</span> &#123;</span><br><span class="line">     setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">       resolve(<span class="string">'2'</span>);</span><br><span class="line">       <span class="built_in">console</span>.log(<span class="string">'2 sec'</span>);</span><br><span class="line">     &#125;, <span class="number">2000</span>);</span><br><span class="line">   &#125;)</span><br><span class="line"> &#125;;</span><br><span class="line"><span class="keyword">const</span> example = <span class="keyword">async</span> () =&gt; &#123;</span><br><span class="line">   <span class="keyword">await</span> excuteAfterTwoSec();</span><br><span class="line">   <span class="keyword">await</span> excuteAfterOneSec();</span><br><span class="line"> &#125;</span><br><span class="line"> <span class="built_in">console</span>.log(example());</span><br></pre></td></tr></table></figure>
 
-<p>&emsp;&emsp;得到的结果是先打印了2再打印1。删掉await之后，就先打印了1,再打印2。就不放置结果了….<br>&emsp;&emsp;await是这样的，那么async这个关键字表示了啥啊，首先async这个方法表示函数是异步的(尼玛的，废话)…其次，async修饰的函数返回的是一个promise…上述example函数打印出来长这样。<br><img src="http://123.207.87.254:3999/uploads/2020-07-30/233190e4.png" alt="example"></p>
+<p>&emsp;&emsp;得到的结果是先打印了2再打印1。删掉await之后，就先打印了1,再打印2。就不放置结果了….<br>&emsp;&emsp;await是这样的，那么async这个关键字表示了啥啊，首先async这个方法表示函数是异步的(尼玛的，废话)…其次，async修饰的函数返回的是一个promise…上述example函数打印出来长这样。<br><img src="https://i.loli.net/2021/02/19/ZFCYpJ7IE54WQbm.png" alt="example"></p>
 <p>&emsp;&emsp;正常来说我这个函数没有定义返回值，我打印出来的值应该是个undefined。然而打印出来一个Promise…而且在函数内如果有await的话，那么返回的promise在await执行完毕之前状态为pending，如果没有await的话，返回的是一个状态确定的promise。如下  </p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> example = <span class="keyword">async</span> () =&gt; &#123;</span><br><span class="line">   excuteAfterTwoSec();</span><br><span class="line">   excuteAfterOneSec();</span><br><span class="line"> &#125;</span><br><span class="line"> <span class="built_in">console</span>.log(example());</span><br></pre></td></tr></table></figure>
 
@@ -368,32 +368,32 @@
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fetch(url).then(<span class="function"><span class="params">response</span> =&gt;</span> response.json()).then(<span class="function"><span class="params">data</span> =&gt;</span> excuteData(data)).catch();</span><br></pre></td></tr></table></figure>
 
 <p>&emsp;&emsp;那么，Promise咋用呢，上面哪两个函数其实差不多了  </p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> promise1 = <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve,reject</span>) =&gt;</span> &#123;</span><br><span class="line"><span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    resolve(<span class="string">&#x27;foo&#x27;</span>);</span><br><span class="line">  &#125;, <span class="number">300</span>);</span><br><span class="line">&#125;);</span><br><span class="line">promise1</span><br><span class="line">  .then(<span class="function"><span class="params">data</span> =&gt;</span> &#123;<span class="built_in">console</span>.log(data); <span class="keyword">return</span> data.length&#125;)</span><br><span class="line">  .then(<span class="function"><span class="params">length</span> =&gt;</span> <span class="built_in">console</span>.log(length))</span><br><span class="line">  .catch();</span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> promise1 = <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve,reject</span>) =&gt;</span> &#123;</span><br><span class="line">setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    resolve(<span class="string">'foo'</span>);</span><br><span class="line">  &#125;, <span class="number">300</span>);</span><br><span class="line">&#125;);</span><br><span class="line">promise1</span><br><span class="line">  .then(<span class="function"><span class="params">data</span> =&gt;</span> &#123;<span class="built_in">console</span>.log(data); <span class="keyword">return</span> data.length&#125;)</span><br><span class="line">  .then(<span class="function"><span class="params">length</span> =&gt;</span> <span class="built_in">console</span>.log(length))</span><br><span class="line">  .catch();</span><br></pre></td></tr></table></figure>
 
 <p>&emsp;&emsp;这里面会在<strong>resolve执行之后执行then</strong>方法，并且传入resolve的参数，会作为then的callBack的参数(所以这里then里面的data就是’foo’了)，同时<strong>then()也会返回一个Promise</strong>，像这里的return data.length，其实返回的是一个Promise.resolve(data.length)。<br>&emsp;&emsp;所以呢，data.length又会作为参数传到下一个then(这里的then里面的length就是foo的length 等于 3)。而<strong>catch方法在被reject的时候调用</strong>。如果出现这样的返回，就进的catch方法，如下  </p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> promise1 = <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve,reject</span>) =&gt;</span> &#123;</span><br><span class="line"><span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    resolve(<span class="string">&#x27;foo&#x27;</span>);</span><br><span class="line">  &#125;, <span class="number">300</span>);</span><br><span class="line">&#125;);</span><br><span class="line">promise1</span><br><span class="line">  .then(<span class="function"><span class="params">data</span> =&gt;</span> &#123;<span class="built_in">console</span>.log(data); <span class="keyword">return</span> data.length&#125;)</span><br><span class="line">  .then(<span class="function"><span class="params">length</span> =&gt;</span> <span class="built_in">console</span>.log(length))</span><br><span class="line">  .catch(<span class="function"><span class="params">data</span> =&gt;</span><span class="built_in">console</span>.log(data));</span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> promise1 = <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve,reject</span>) =&gt;</span> &#123;</span><br><span class="line">setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    resolve(<span class="string">'foo'</span>);</span><br><span class="line">  &#125;, <span class="number">300</span>);</span><br><span class="line">&#125;);</span><br><span class="line">promise1</span><br><span class="line">  .then(<span class="function"><span class="params">data</span> =&gt;</span> &#123;<span class="built_in">console</span>.log(data); <span class="keyword">return</span> data.length&#125;)</span><br><span class="line">  .then(<span class="function"><span class="params">length</span> =&gt;</span> <span class="built_in">console</span>.log(length))</span><br><span class="line">  .catch(<span class="function"><span class="params">data</span> =&gt;</span><span class="built_in">console</span>.log(data));</span><br></pre></td></tr></table></figure>
 
 <p>&emsp;&emsp;自己运行一下就可以发现在第一个then中出现error之后不执行第二个then，直接执行了catch。<br>&emsp;&emsp;那么问题又来了，Promise和async/await有啥关系呢…事实上，async/await是generator和promise的一个语法糖。如下所示(其实没用到过generator..所以不知道这玩意儿有啥用)。  </p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"> <span class="keyword">const</span> example = <span class="keyword">async</span> () =&gt; &#123;</span><br><span class="line">    <span class="keyword">await</span> excuteAfterTwoSec();</span><br><span class="line">    <span class="keyword">await</span> excuteAfterOneSec();</span><br><span class="line">  &#125;</span><br><span class="line"><span class="comment">// 等价于</span></span><br><span class="line"><span class="keyword">const</span> example = <span class="keyword">async</span> () =&gt; &#123;</span><br><span class="line">    excuteAfterTwoSec().then(<span class="function">() =&gt;</span> excuteAfterOneSec());</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"> <span class="keyword">const</span> example = <span class="keyword">async</span> () =&gt; &#123;</span><br><span class="line">    <span class="keyword">await</span> excuteAfterTwoSec();</span><br><span class="line">    <span class="keyword">await</span> excuteAfterOneSec();</span><br><span class="line">  &#125;</span><br><span class="line"><span class="comment">// 等价于</span></span><br><span class="line"><span class="keyword">const</span> example = <span class="keyword">async</span> () =&gt; &#123;</span><br><span class="line">    excuteAfterTwoSec().then(<span class="function"><span class="params">()</span> =&gt;</span> excuteAfterOneSec());</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
 
 <h2 id="为什么"><a href="#为什么" class="headerlink" title="为什么"></a>为什么</h2><p>&emsp;&emsp;之前刚刚接触promise的时候好奇过一段时间，原本用ajax之类的方法，然后在访问接口之后执行回调函数，已经是很方便了呀，我为啥要用promise，还有现在的这个async/await？<br>&emsp;&emsp;我特么现在终于是知道了，当我需要访问三个接口，我需要三个接口全通之后再进行操作(这样的设计是很多的….)我如果用回调函数的话就会陷入回调地狱..  </p>
-<pre><code class="javascript">$.ajax(&#123;
-  url:<span class="string">`<span class="subst">$&#123;firstUrl&#125;</span>`</span>,
-  success:<span class="function"><span class="params">()</span> =&gt;</span>&#123;
-    $.ajax(&#123;
-      url:<span class="string">`<span class="subst">$&#123;secondUrl&#125;</span>`</span>,
-      success:<span class="function"><span class="params">()</span> =&gt;</span> &#123;
-        $.ajax(&#123;
-          url:<span class="string">`<span class="subst">$&#123;thirdUrl&#125;</span>`</span>,
-          success:<span class="function"><span class="params">()</span> =&gt;</span> &#123;finalExcute()&#125; ,
-          error:<span class="function"><span class="params">()</span>=&gt;</span>&#123;<span class="built_in">console</span>.log(error)&#125;
-        &#125;)
-      &#125;
-     error:<span class="function"><span class="params">()</span>=&gt;</span>&#123;<span class="built_in">console</span>.log(error)&#125;
-    &#125;)
-  &#125;
-  error:<span class="function">(<span class="params">error</span>) =&gt;</span> &#123;<span class="built_in">console</span>.log(error)&#125;
-&#125;)</code></pre>
+<pre><code class="javascript">$.ajax({
+  url:<span class="string">`<span class="subst">${firstUrl}</span>`</span>,
+  success:<span class="function"><span class="params">()</span> =&gt;</span>{
+    $.ajax({
+      url:<span class="string">`<span class="subst">${secondUrl}</span>`</span>,
+      success:<span class="function"><span class="params">()</span> =&gt;</span> {
+        $.ajax({
+          url:<span class="string">`<span class="subst">${thirdUrl}</span>`</span>,
+          success:<span class="function"><span class="params">()</span> =&gt;</span> {finalExcute()} ,
+          error:<span class="function"><span class="params">()</span>=&gt;</span>{<span class="built_in">console</span>.log(error)}
+        })
+      }
+     error:<span class="function"><span class="params">()</span>=&gt;</span>{<span class="built_in">console</span>.log(error)}
+    })
+  }
+  error:<span class="function">(<span class="params">error</span>) =&gt;</span> {<span class="built_in">console</span>.log(error)}
+})</code></pre>
 <p>&emsp;&emsp;不说有多难看，我即使接口方面没有依赖我依然必须顺序执行…要是接口响应很慢，一个加载等一年？要是碰到上面那个需要十个接口全部访问之后再执行的功能，画面太美不敢看……<br>&emsp;&emsp;针对于这种写法，对于没有接口返回数据依赖的接口promise完全可以用Promise.All解决回调地狱，而且人家还可以用catch来统一处理异常，多个接口访问后执行的实现也更加优雅有效率，而且链式调用用这也比回调函数舒服。<br>&emsp;&emsp;async/await最爽了，至少在代码层面上看着非常的清爽，避免回调，用try catch处理异常(在这之前写js我根本用不到try catch这个语法的)…  </p>
 <hr/>
 &emsp;&emsp;其实之前看前端面试题啥的，深入promise，async/await，setTimeout的话会扯到eventLoop，关于eventloop的内容请见如下内容[https://tommy0121.github.io/2020/07/31/javascript-event/](https://tommy0121.github.io/2020/07/31/javascript-event/)
@@ -516,7 +516,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-count">19</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -527,7 +527,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-count">4</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -538,7 +538,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-count">12</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

@@ -83,10 +83,10 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="前端代码复用">
 <meta property="og:url" content="http://tommy0121.github.io/2020/11/03/%E5%89%8D%E7%AB%AF%E4%BB%A3%E7%A0%81%E5%A4%8D%E7%94%A8/index.html">
-<meta property="og:site_name" content="tommy的blog">
+<meta property="og:site_name" content="tommy的前端博客">
 <meta property="og:description" content="唉，新公司的代码不忍卒读，忍不住记录下个人对于前端代码复用，分离的理解….  不要在代码中直接使用请求函数  强烈谴责在每次发起请求的时候写类似这样的代码 123componentDidMount()&amp;#123;  Request(&amp;#123;method:&#39;post&#39;,url:&#39;&#x2F;info&#39;,data:&amp;#123;id:&#39;123&#39;&amp;#125;&amp;#125;).then(res&#x3D;&gt;&amp;#123;">
 <meta property="article:published_time" content="2020-11-03T01:22:52.000Z">
-<meta property="article:modified_time" content="2021-02-09T03:28:02.269Z">
+<meta property="article:modified_time" content="2021-02-21T04:45:03.654Z">
 <meta property="article:author" content="Tommy xia">
 <meta property="article:tag" content="javascript">
 <meta property="article:tag" content="前端工程">
@@ -126,7 +126,7 @@
 
 
 
-  <title>前端代码复用 | tommy的blog</title>
+  <title>前端代码复用 | tommy的前端博客</title>
   
 
 
@@ -156,7 +156,7 @@
     <div class="custom-logo-site-title">
       <a href="/"  class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
-        <span class="site-title">tommy的blog</span>
+        <span class="site-title">tommy的前端博客</span>
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
@@ -262,7 +262,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="tommy的blog">
+      <meta itemprop="name" content="tommy的前端博客">
     </span>
 
     
@@ -350,7 +350,7 @@
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">componentDidMount()&#123;</span><br><span class="line">  Request(&#123;<span class="attr">method</span>:<span class="string">'post'</span>,<span class="attr">url</span>:<span class="string">'/info'</span>,<span class="attr">data</span>:&#123;<span class="attr">id</span>:<span class="string">'123'</span>&#125;&#125;).then(<span class="function"><span class="params">res</span>=&gt;</span>&#123;&#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>  所有的请求应该单独写在service文件夹下，提供一个语义化的方法如下所示<br>  <figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> getUserInfo = (id:<span class="built_in">string</span>):<span class="built_in">Promise</span>&lt;&#123;name:<span class="built_in">string</span>,age:<span class="built_in">number</span>&#125;&gt;=&gt;&#123;</span><br><span class="line">  <span class="keyword">return</span> Request(&#123;method:<span class="string">'post'</span>,url:<span class="string">'/info'</span>,data:&#123;id:<span class="string">'123'</span>&#125;&#125;)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 用async也行。</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">getUserInfo</span>(<span class="params">id:<span class="built_in">string</span></span>):</span>&#123;</span><br><span class="line">  <span class="keyword">const</span> result = <span class="keyword">await</span> Request(&#123;method:<span class="string">'post'</span>,url:<span class="string">'/info'</span>,data:&#123;id:<span class="string">'123'</span>&#125;&#125;)</span><br><span class="line">  <span class="keyword">return</span> result</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>  好处如下：</p>
 <ul>
-<li>给接口语义化，在没有注释的情况下不至于抓瞎，特别是如果接口本身不够rest(比如现在公司所有接口都是/123/123这样的数字组成，完全不能跟进接口地址来判断这个接口有个啥子用)。</li>
+<li>给接口语义化，在没有注释的情况下不至于抓瞎，特别是如果接口本身不够rest(比如现在公司所有接口都是/123/123这样的数字组成，完全不能根据接口地址来判断这个接口有个啥子用)。</li>
 <li>复用性强，现在在项目中全局搜索某个接口名三四个地方用到该接口，如果放到service，找到相关调用地点，直接跑到函数定义出find refrence，他不香吗？还可以少写几遍接口名称，或者是相关参数。</li>
 <li>还是复用强，所有的接口管理得当，可以直接作为一个单独的项目发布，给所有的业务项目提供底层依赖，而service项目可以编写相关单测脚本，定时去跑测试代码，监控接口的状态。<ol start="2">
 <li>React 代码分层 </li>
@@ -477,7 +477,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-count">19</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -488,7 +488,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-count">4</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -499,7 +499,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-count">12</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

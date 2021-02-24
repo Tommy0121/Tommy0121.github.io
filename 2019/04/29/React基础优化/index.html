@@ -83,7 +83,7 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="React基础优化">
 <meta property="og:url" content="http://tommy0121.github.io/2019/04/29/React%E5%9F%BA%E7%A1%80%E4%BC%98%E5%8C%96/index.html">
-<meta property="og:site_name" content="tommy的blog">
+<meta property="og:site_name" content="tommy的前端博客">
 <meta property="og:description" content="&amp;emsp;&amp;emsp;首先声明写这篇文章的上下文：其实就是项目中碰到了很好奇….   list和key&amp;emsp;&amp;emsp;React的初学者一开始一定会有一个疑问：我在jsx里面用了循环列出来的标签为什么就一定要我加个key的属性呢，这玩意儿有啥用呢…….我也碰到了，也很好奇，于是跑到react官网看，在Reconciliation发现key属性是Virtual DOM更改后，前后比较的一个">
 <meta property="article:published_time" content="2019-04-28T16:00:00.000Z">
 <meta property="article:modified_time" content="2020-09-23T01:15:22.734Z">
@@ -126,7 +126,7 @@
 
 
 
-  <title>React基础优化 | tommy的blog</title>
+  <title>React基础优化 | tommy的前端博客</title>
   
 
 
@@ -156,7 +156,7 @@
     <div class="custom-logo-site-title">
       <a href="/"  class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
-        <span class="site-title">tommy的blog</span>
+        <span class="site-title">tommy的前端博客</span>
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
@@ -262,7 +262,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="tommy的blog">
+      <meta itemprop="name" content="tommy的前端博客">
     </span>
 
     
@@ -354,7 +354,7 @@
 <p>&emsp;&emsp;不过其实这些东西也自己玩玩就完事儿了，真的要用，直接create-react-app就完事了(现在项目就是，自己搭的环境发现不好使，项目做做一半换脚手架…..)。</p>
 <h2 id="看到但是没用过的方法及思路"><a href="#看到但是没用过的方法及思路" class="headerlink" title="看到但是没用过的方法及思路"></a>看到但是没用过的方法及思路</h2><p>&emsp;&emsp;PureComponent 加上 Not Mutating Data，pureComponent会在shouldComponentUpdate的时候自动检查state和props有没有改变，如果没有改变就return false阻止视图更新。但是有个问题是，PureComponent只是一层浅比较，比较了新旧的内存地址，并没有比较内容。所以需要Not Mutating Data。</p>
 <p>&emsp;&emsp;那么，Not Mutating Data这玩意儿咋用呢，其实很简单….</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">this</span>.setState(<span class="function"><span class="params">state</span> =&gt;</span> (&#123;</span><br><span class="line">    state: [...state.words, <span class="string">&#x27;newValue&#x27;</span>],</span><br><span class="line">  &#125;));</span><br><span class="line"><span class="built_in">this</span>.setState(<span class="function"><span class="params">state</span> =&gt;</span> (&#123;</span><br><span class="line">    state: &#123;...state,<span class="attr">key</span>:<span class="string">&#x27;map&#x27;</span>&#125;,</span><br><span class="line">  &#125;));</span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">this</span>.setState(<span class="function"><span class="params">state</span> =&gt;</span> (&#123;</span><br><span class="line">    state: [...state.words, <span class="string">'newValue'</span>],</span><br><span class="line">  &#125;));</span><br><span class="line"><span class="keyword">this</span>.setState(<span class="function"><span class="params">state</span> =&gt;</span> (&#123;</span><br><span class="line">    state: &#123;...state,<span class="attr">key</span>:<span class="string">'map'</span>&#125;,</span><br><span class="line">  &#125;));</span><br></pre></td></tr></table></figure>
 
 <p>&emsp;&emsp;在setState和setProps用es6的这个三个点的spread syntax可以避免(虽然之前并不知道这样写有啥好处，但是已经习惯这种写法了….顺便setState是异步的这点也搞得我脑壳痛)。</p>
 <hr/>
@@ -481,7 +481,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-count">19</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -492,7 +492,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-count">4</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -503,7 +503,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-count">12</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

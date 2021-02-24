@@ -83,16 +83,16 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Jest React Test">
 <meta property="og:url" content="http://tommy0121.github.io/2019/06/10/jest-react-test/index.html">
-<meta property="og:site_name" content="tommy的blog">
+<meta property="og:site_name" content="tommy的前端博客">
 <meta property="og:description" content="&amp;emsp;&amp;emsp;首先呢，咱这里要求测试覆盖率要有90以上，UI也要测。原本用的mocha测试框架，然后由于有大量的UI需要测试，导致了测试代码比原本的代码还要多(太尼玛真实了..)。然后就换了框架，用jest…还真别说，jest的snapshot是真滴好使，只要mapToSnapShot一个方法就能cover大部分的UI。 1：测试不同分辨率下不同的表现&amp;emsp;&amp;emsp;然而，jes">
-<meta property="og:image" content="http://123.207.87.254:3999/uploads/2020-07-30/a4a55835.png">
+<meta property="og:image" content="https://i.loli.net/2021/02/19/EbaZjco9iyMeWlU.png">
 <meta property="article:published_time" content="2019-06-09T16:00:00.000Z">
-<meta property="article:modified_time" content="2020-09-23T01:15:22.737Z">
+<meta property="article:modified_time" content="2021-02-21T04:45:03.648Z">
 <meta property="article:author" content="Tommy xia">
 <meta property="article:tag" content="javascript">
 <meta property="article:tag" content="react">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://123.207.87.254:3999/uploads/2020-07-30/a4a55835.png">
+<meta name="twitter:image" content="https://i.loli.net/2021/02/19/EbaZjco9iyMeWlU.png">
 
 
 
@@ -128,7 +128,7 @@
 
 
 
-  <title>Jest React Test | tommy的blog</title>
+  <title>Jest React Test | tommy的前端博客</title>
   
 
 
@@ -158,7 +158,7 @@
     <div class="custom-logo-site-title">
       <a href="/"  class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
-        <span class="site-title">tommy的blog</span>
+        <span class="site-title">tommy的前端博客</span>
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
@@ -264,7 +264,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="tommy的blog">
+      <meta itemprop="name" content="tommy的前端博客">
     </span>
 
     
@@ -349,8 +349,8 @@
 <p>&emsp;&emsp;首先呢，测UI其实只要html上面的className是我们想要的，具体长啥样我们是不管的。然后media query不同的分辨率下className不同，是根据body里面的clientWidth来判断的。  </p>
 <p>&emsp;&emsp;那么问题简单了，jest啊mocha啊其实算是个js的运行容器，类似于document.body这样的全局属性是存在的，但是它们没有值(直接去获得document.body.clientWidth是拿不到的，因为在jest里面有body，但是body里面没有clientWidth)，所以我们用Object.defineProperty(document.body, ‘clientWidth’, { value: 768 ,configurable: true,});来给jest添加全局clientWidth就可以了(configurable记得要加上，不然不能redefine property)。</p>
 <h2 id="2：单独组件不要使用redux"><a href="#2：单独组件不要使用redux" class="headerlink" title="2：单独组件不要使用redux"></a>2：单独组件不要使用redux</h2><p>&emsp;&emsp;= =这个经验真的是血的教训….  </p>
-<p>&emsp;&emsp;一般来说呢，测试redux包裹的组件呢，就是直接把使用connect之前的组件export出来，然后直接测。因为如果引用的是connect的那个组件，你就需要在测试里面同样的加上provider父组件。而且好多东西你完全测不了(忘了当时遇到啥东西测不了，反正最后还是选择不引用connect那个组件解决的)….如图：<br><img src="http://123.207.87.254:3999/uploads/2020-07-30/a4a55835.png" alt="example"><br>&emsp;&emsp;后来碰到一个情况，我特么手贱在某个component里面用了redux，直接导致所有用到该component的container直接测试failed….在shallow component的时候直接就报错，connect过的组件需要provider……然后就只能默默的把东西都改回来….  </p>
-<p>&emsp;&emsp;那么咱为啥要在组件里面写redux呢，因为某个组件就固定要用到redux的某两个数据…参考前面的文章..<a href="/post/聊天框效果/">聊天框动画效果</a></p>
+<p>&emsp;&emsp;一般来说呢，测试redux包裹的组件呢，就是直接把使用connect之前的组件export出来，然后直接测。因为如果引用的是connect的那个组件，你就需要在测试里面同样的加上provider父组件。而且好多东西你完全测不了(忘了当时遇到啥东西测不了，反正最后还是选择不引用connect那个组件解决的)….如图：<br><img src="https://i.loli.net/2021/02/19/EbaZjco9iyMeWlU.png" alt="example"><br>&emsp;&emsp;后来碰到一个情况，我特么手贱在某个component里面用了redux，直接导致所有用到该component的container直接测试failed….在shallow component的时候直接就报错，connect过的组件需要provider……然后就只能默默的把东西都改回来….  </p>
+<p>&emsp;&emsp;那么咱为啥要在组件里面写redux呢，因为某个组件就固定要用到redux的某两个数据…参考前面的文章..<a href="/2019/05/06/聊天框效果/">聊天框动画效果</a></p>
 
       
     </div>
@@ -472,7 +472,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-count">19</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -483,7 +483,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-count">4</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -494,7 +494,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-count">12</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
